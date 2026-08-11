@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap");
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+html {
+  font-family: "Quicksand", sans-serif;
+  color: #ebe7ef;
+}
+
+body {
+  @apply bg-gradient-to-r from-slate-100 to-gray-200 text-gray-900
+  dark:from-slate-800 dark:to-gray-900 dark:text-gray-50 
+  transition-all duration-300;
+}
+
+button {
+  cursor: pointer;
+}

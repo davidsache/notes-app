@@ -1,11 +1,29 @@
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Dashboard } from './components/Dashboard'; // Assuming a primary protected component
+import { LoginForm } from './components/LoginForm';
+import { SignUp } from './components/SignUp';
 
-function App() {
+export const App: React.FC = () => {
   return (
-    <>
-      <h1>Hello World!</h1>
-    </>
-  )
-}
-
-export default App
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginForm/>}/>
+          <Route path="/signup" element={<SignUp/>}/>
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace/>}/>
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+};
