@@ -25,10 +25,17 @@ export const LoginForm: React.FC = () => {
       }
     } 
     catch (err) {
+      setSubmitted(false);
+
       if (err instanceof Error) {
         setError(err.message);
-        setSubmitted(false);
       }
+    }
+  };
+
+  const handleSignupLink = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (submitted) {
+      e.preventDefault();
     }
   };
 
@@ -43,16 +50,19 @@ export const LoginForm: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
+            maxLength={255}
             required
             className="w-full rounded-md border border-slate-600 p-2"
           />
         </div>
+        
         <div>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            minLength={8}
             required
             className="w-full rounded-md border border-slate-600 p-2"
           />
@@ -64,13 +74,16 @@ export const LoginForm: React.FC = () => {
         <div className="mt-2">
           <button 
             type="submit" 
-            className="p-2 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100" 
+            className="p-2 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 disabled:bg-slate-300 disabled:border-slate-500" 
             disabled={submitted}
           >
             Log In
           </button>
           <p className="inline ms-2">
-            Not registered? <NavLink to="/signup" className="text-indigo-600 hover:text-indigo-400">Sign up</NavLink>
+            Not registered?&nbsp;
+            <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400">
+              Sign up
+            </NavLink>
           </p>
         </div>
       </form>
