@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
 import loadingImgW from '../assets/loading-w.gif';
 import loadingImgB from '../assets/loading-b.gif';
+import { useTheme } from '../context/ThemeContext';
 
 export const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -11,6 +12,7 @@ export const LoginForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +42,8 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <form onSubmit={handleSubmit} className="w-full max-w-md rounded-lg p-8 shadow-md bg-white dark:bg-slate-800">
         <h2 className="text-center font-bold">Login</h2>
         
         <div className="mb-2 mt-1">
@@ -68,20 +70,20 @@ export const LoginForm: React.FC = () => {
           />
         </div>
 
-        {submitted && <img className="w-8 mt-1" src={loadingImgB} alt="Loading gif"/>}
+        {submitted && <img className="w-8 mt-1" src={darkMode ? loadingImgW : loadingImgB} alt="Loading gif"/>}
         {error && <div className="text-red-600 mt-1">{error}</div>}
 
         <div className="mt-2">
           <button 
             type="submit" 
-            className="p-2 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 disabled:bg-slate-300 disabled:border-slate-500" 
+            className="p-2 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 disabled:bg-slate-300 disabled:border-slate-500 dark:hover:border-sky-500 dark:hover:bg-sky-700" 
             disabled={submitted}
           >
             Log In
           </button>
           <p className="inline ms-2">
             Not registered?&nbsp;
-            <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400">
+            <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
               Sign up
             </NavLink>
           </p>

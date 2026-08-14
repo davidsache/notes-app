@@ -1,31 +1,58 @@
-import logoHeader from '../assets/logo_header.png';
+import settingsB from '../assets/settings_b.svg';
+import settingsW from '../assets/settings_w.svg';
 
 import allNotesB from '../assets/home_b.svg';
 import allNotesW from '../assets/home_w.svg';
 
-import archivedNotesB from '../assets/archive_b.svg';
-import archivedNotesW from '../assets/archive_w.svg';
+import logoutB from '../assets/logout_b.svg';
+import logoutW from '../assets/logout_w.svg';
 
-export const Header: React.FC = () => {
+import { type WindowState } from '../interfaces/WindowState';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+
+export const Header = ({ currentWindow, onWindowChange }: WindowState) => {
+  const { logout } = useAuth();
+  const { darkMode } = useTheme();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    }
+    catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
-    <header>
-      <div className="w-48">
-        <img src={logoHeader} className="w-32 mt-4"/>
-        <div className="mt-4 ms-4">
-          <button className="block pb-2">
-            <img src={allNotesB} alt="All Notes" className="inline me-1"/>
-            All Notes
-          </button>
-          <button className="block">
-            <img src={archivedNotesB} alt="Archived Notes" className="inline me-1"/>
-            Archived Notes
-          </button>
-        </div>
-        <hr className="m-2 bg-slate-100"/>
-        <div>
-          <h3 className="ms-4 text-gray-500 font-bold">Tags</h3>
-          
-        </div>
+    <header className="h-16 border-b-2 border-slate-300 flex items-center px-6 flex-shrink-0 bg-gray-100 dark:bg-gray-900">
+      <h1 className="font-bold text-xl">
+        {currentWindow === 'notes' ? 'All Notes' : 'Settings'}
+      </h1>
+      <div className="ml-auto">
+        {currentWindow === 'notes' &&
+          <input 
+            className="border-2 w-64 h-8 me-2 rounded-md border-slate-300" 
+            type="text" 
+            placeholder="Search by title, content, or tags..."
+          />
+        }
+
+        <button onClick={() => onWindowChange(currentWindow === 'notes' ? 'settings' : 'notes')}>
+          <img 
+            className="inline-block align-middle" 
+            src={currentWindow === 'notes' ? darkMode ? settingsW : settingsB : darkMode ? allNotesW : allNotesB} 
+            alt={currentWindow === 'notes' ? 'Notes' : 'Settings'}
+          />
+        </button>
+
+        <button onClick={handleLogout} className='ms-2'>
+          <img 
+            className="inline-block align-middle" 
+            src={darkMode ? logoutW : logoutB} 
+            alt="Log out"
+          />
+        </button>
       </div>
     </header>
   );
