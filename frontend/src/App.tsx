@@ -11,7 +11,7 @@ export const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('notesApp-darkMode');
+    const storedTheme = localStorage.getItem('darkMode');
     const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const initialModeIsDark = storedTheme === 'dark' || (!storedTheme && systemPrefersDark);
 

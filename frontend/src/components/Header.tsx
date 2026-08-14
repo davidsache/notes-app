@@ -1,12 +1,9 @@
 import settingsB from '../assets/settings_b.svg';
 import settingsW from '../assets/settings_w.svg';
-
 import allNotesB from '../assets/home_b.svg';
 import allNotesW from '../assets/home_w.svg';
-
 import logoutB from '../assets/logout_b.svg';
 import logoutW from '../assets/logout_w.svg';
-
 import { type WindowState } from '../interfaces/WindowState';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -32,7 +29,7 @@ export const Header = ({ currentWindow, onWindowChange }: WindowState) => {
       <div className="ml-auto">
         {currentWindow === 'notes' &&
           <input 
-            className="border-2 w-64 h-8 me-2 rounded-md border-slate-300" 
+            className="border-2 w-64 h-8 me-2 rounded-md border-slate-300 bg-white dark:bg-gray-500" 
             type="text" 
             placeholder="Search by title, content, or tags..."
           />

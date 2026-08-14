@@ -7,7 +7,7 @@ export const Dashboard: React.FC = () => {
   const [activeWindow, setActiveWindow] = useState<'notes' | 'settings'>('notes');
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full bg-white dark:bg-gray-800">
       <Sidebar/>
       <div className="flex flex-col flex-1">
         <Header currentWindow={activeWindow} onWindowChange={setActiveWindow}/>
