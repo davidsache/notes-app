@@ -4,7 +4,7 @@ export const Settings: React.FC = () => {
   const { darkMode, toggleTheme } = useTheme();
 
   return (
-    <div>
+    <div className="p-2">
       <div>
         <label className="inline-flex items-center me-5 cursor-pointer">
           <input type="checkbox" value="" className="sr-only peer" onChange={toggleTheme} checked={darkMode}/>

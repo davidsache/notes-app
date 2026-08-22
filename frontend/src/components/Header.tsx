@@ -8,7 +8,7 @@ import { type WindowState } from '../interfaces/WindowState';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
-export const Header = ({ currentWindow, onWindowChange }: WindowState) => {
+export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) => {
   const { logout } = useAuth();
   const { darkMode } = useTheme();
 
@@ -24,10 +24,10 @@ export const Header = ({ currentWindow, onWindowChange }: WindowState) => {
   return (
     <header className="h-16 border-b-2 border-slate-300 flex items-center px-6 flex-shrink-0 bg-gray-100 dark:bg-gray-900">
       <h1 className="font-bold text-xl">
-        {currentWindow === 'notes' ? 'All Notes' : 'Settings'}
+        {currentDashboardWindow === 'notes' ? 'All Notes' : 'Settings'}
       </h1>
       <div className="ml-auto">
-        {currentWindow === 'notes' &&
+        {currentDashboardWindow === 'notes' &&
           <input 
             className="border-2 w-64 h-8 me-2 rounded-md border-slate-300 bg-white dark:bg-gray-500" 
             type="text" 
@@ -35,11 +35,11 @@ export const Header = ({ currentWindow, onWindowChange }: WindowState) => {
           />
         }
 
-        <button onClick={() => onWindowChange(currentWindow === 'notes' ? 'settings' : 'notes')}>
+        <button onClick={() => onWindowChange(currentDashboardWindow === 'notes' ? 'settings' : 'notes')}>
           <img 
             className="inline-block align-middle" 
-            src={currentWindow === 'notes' ? darkMode ? settingsW : settingsB : darkMode ? allNotesW : allNotesB} 
-            alt={currentWindow === 'notes' ? 'Notes' : 'Settings'}
+            src={currentDashboardWindow === 'notes' ? darkMode ? settingsW : settingsB : darkMode ? allNotesW : allNotesB} 
+            alt={currentDashboardWindow === 'notes' ? 'Notes' : 'Settings'}
           />
         </button>
 

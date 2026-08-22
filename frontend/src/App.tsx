@@ -6,6 +6,7 @@ import { Dashboard } from './components/Dashboard';
 import { LoginForm } from './components/LoginForm';
 import { SignUp } from './components/SignUp';
 import { ThemeContext } from './context/ThemeContext';
+import { NoteEditor } from './components/NoteEditor';
 
 export const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -48,6 +49,7 @@ export const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<LoginForm/>}/>
             <Route path="/signup" element={<SignUp/>}/>
+            <Route path="/newNote" element={<NoteEditor/>}/>
             <Route 
               path="/" 
               element={
