@@ -150,17 +150,17 @@ const Element = ({ attributes, children, element }: any) => {
   const style = { textAlign: element.align };
   switch (element.type) {
     case 'block-quote': 
-      return <blockquote style={style} {...attributes}>{children}</blockquote>;
+      return <blockquote style={style} className="italic font-medium leading-relaxed" {...attributes}>"{children}"</blockquote>;
     case 'bulleted-list': 
-      return <ul style={style} {...attributes}>{children}</ul>;
+      return <ul style={style} className="list-disc pl-5" {...attributes}>{children}</ul>;
     case 'heading-one': 
-      return <h1 style={style} {...attributes}>{children}</h1>;
+      return <h1 style={style} className="text-4xl font-bold" {...attributes}>{children}</h1>;
     case 'heading-two': 
-      return <h2 style={style} {...attributes}>{children}</h2>;
+      return <h2 style={style} className="text-3xl font-bold" {...attributes}>{children}</h2>;
     case 'list-item': 
       return <li style={style} {...attributes}>{children}</li>;
     case 'numbered-list': 
-      return <ol style={style} {...attributes}>{children}</ol>;
+      return <ol style={style} className="list-decimal pl-5" {...attributes}>{children}</ol>;
     default: 
       return <p style={style} {...attributes}>{children}</p>;
   }
@@ -253,12 +253,12 @@ export const CreateNote = ({ initialValue, onChange }: RichTextProps) => {
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
+        placeholder="Note content..."
         spellCheck
         autoFocus
         onKeyDown={(e) => onEditableKeyDown(e, editor)}
         className="border-2 border-slate-300 rounded-md p-2"
-        maxLength={65000}
+        maxLength={10000}
       />
     </Slate>
   );
