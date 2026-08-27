@@ -4,17 +4,19 @@ import backW from '../assets/back_w.svg';
 import { useNavigate } from "react-router-dom";
 import type { Descendant } from "slate";
 import { Node } from "slate";
+import { useNotes } from "../hooks/useNotes";
 
 export const NoteEditor = () => {
+  const { createNote } = useNotes();
   const navigate = useNavigate();
   const [title, setTitle] = useState<string>('');
   const defaultEditorValue: Descendant[] = [{ type: 'paragraph', children: [{ text: '' }] }];
   const [editorValue, setEditorValue] = useState<Descendant[]>(defaultEditorValue);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
   // Emptiness Check Logic
   const isTitleEmpty = title.trim() === '';
   const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
-  const isSubmitDisabled = isTitleEmpty || isEditorEmpty;
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const plainText = e.target.value.replace(/[\r\n]+/g, ' ');
@@ -28,9 +30,20 @@ export const NoteEditor = () => {
     }
   };
 
-  const handleSaveNoteButton = () => {
+  const handleSaveNoteButton = async () => {
+    setSubmitted(true);
 
+    await createNote({
+      title: title,
+      content: JSON.stringify(editorValue), 
+      is_archived: false
+    });
+
+    setSubmitted(false);
+    navigate('/');
   };
+
+  console.log(JSON.stringify(editorValue))
 
   return (
     <div className="max-w-4xl mx-auto my-5 p-5 rounded-md bg-white dark:bg-gray-800 border-1 border-slate-200 dark:border-slate-900">
@@ -58,7 +71,7 @@ export const NoteEditor = () => {
         <button 
           className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded align-middle" 
           onClick={handleSaveNoteButton}
-          disabled={isSubmitDisabled}
+          disabled={isTitleEmpty || isEditorEmpty || submitted}
         >
           Save note
         </button>
