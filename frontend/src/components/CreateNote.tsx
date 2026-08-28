@@ -4,6 +4,8 @@ import { Editable, withReact, useSlate, Slate, ReactEditor } from 'slate-react';
 import { Editor, Transforms, createEditor, type Descendant, Element as SlateElement, type BaseEditor } from 'slate';
 import { withHistory, HistoryEditor } from 'slate-history';
 import { useTheme } from '../context/ThemeContext';
+import { Element } from './Slate/Element';
+import { Leaf } from './Slate/Leaf';
 
 import boldB from '../assets/slate/bold_b.svg';
 import boldW from '../assets/slate/bold_w.svg';
@@ -145,35 +147,6 @@ const toggleMark = (editor: Editor, format: MarkType) => {
   }
 };
 
-// Components
-const Element = ({ attributes, children, element }: any) => {
-  const style = { textAlign: element.align };
-  switch (element.type) {
-    case 'block-quote': 
-      return <blockquote style={style} className="italic font-medium leading-relaxed" {...attributes}>"{children}"</blockquote>;
-    case 'bulleted-list': 
-      return <ul style={style} className="list-disc pl-5" {...attributes}>{children}</ul>;
-    case 'heading-one': 
-      return <h1 style={style} className="text-4xl font-bold" {...attributes}>{children}</h1>;
-    case 'heading-two': 
-      return <h2 style={style} className="text-3xl font-bold" {...attributes}>{children}</h2>;
-    case 'list-item': 
-      return <li style={style} {...attributes}>{children}</li>;
-    case 'numbered-list': 
-      return <ol style={style} className="list-decimal pl-5" {...attributes}>{children}</ol>;
-    default: 
-      return <p style={style} {...attributes}>{children}</p>;
-  }
-};
-
-const Leaf = ({ attributes, children, leaf }: any) => {
-  if (leaf.bold) children = <strong>{children}</strong>;
-  if (leaf.code) children = <code>{children}</code>;
-  if (leaf.italic) children = <em>{children}</em>;
-  if (leaf.underline) children = <u>{children}</u>;
-  return <span {...attributes}>{children}</span>;
-};
-
 const BlockButton = ({ format, icon }: { format: BlockType | string; icon: string }) => {
   const editor = useSlate();
   const active = isBlockActive(
@@ -181,7 +154,7 @@ const BlockButton = ({ format, icon }: { format: BlockType | string; icon: strin
     format,
     TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
   );
-  // { color: active ? 'black' : '#ccc', margin: '0 4px' }
+  
   return (
     <button
       className="my-0 mx-1"

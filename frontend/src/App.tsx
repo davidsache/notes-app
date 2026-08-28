@@ -6,7 +6,7 @@ import { Dashboard } from './components/Dashboard';
 import { LoginForm } from './components/LoginForm';
 import { SignUp } from './components/SignUp';
 import { ThemeContext } from './context/ThemeContext';
-import { NoteEditor } from './components/NoteEditor';
+import { NoteEditor } from './components/Notes/NoteEditor';
 
 export const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);

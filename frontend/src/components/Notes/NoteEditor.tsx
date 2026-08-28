@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { CreateNote } from "./CreateNote";
-import backW from '../assets/back_w.svg';
+import { CreateNote } from "../CreateNote";
+import backW from '../../assets/back_w.svg';
 import { useNavigate } from "react-router-dom";
 import type { Descendant } from "slate";
 import { Node } from "slate";
-import { useNotes } from "../hooks/useNotes";
+import { useNotes } from "../../hooks/useNotes";
 
 export const NoteEditor = () => {
   const { createNote } = useNotes();

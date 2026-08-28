@@ -2,7 +2,7 @@ import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { useState } from "react";
 import { Settings } from "./Settings";
-import { Notes } from "./Notes";
+import { Notes } from "./Notes/Notes";
 
 export const Dashboard: React.FC = () => {
   const [activeWindow, setActiveWindow] = useState<'notes' | 'settings'>('notes');
