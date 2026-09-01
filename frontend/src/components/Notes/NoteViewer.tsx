@@ -1,5 +1,3 @@
-import clockImgW from '../../assets/clock_w.svg';
-import clockImgB from '../../assets/clock_b.svg';
 import { Editable, Slate, withReact } from "slate-react";
 import type { Note } from '../../interfaces/NoteType';
 import { createEditor } from 'slate';
@@ -8,12 +6,17 @@ import { useTheme } from '../../context/ThemeContext';
 import { Element } from '../Slate/Element';
 import { Leaf } from '../Slate/Leaf';
 
+import clockImgW from '../../assets/clock_w.svg';
+import clockImgB from '../../assets/clock_b.svg';
+import archiveImgW from '../../assets/archive_w.svg';
+import archiveImgB from '../../assets/archive_b.svg';
+
 const deserializeFromJson = (jsonString: string) => {
   try {
     const parsed = JSON.parse(jsonString);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+
+    if (Array.isArray(parsed) && parsed.length > 0) 
       return parsed;
-    }
   }
   catch (error) {
     console.error('Invalid JSON string provided:', error);
@@ -34,9 +37,14 @@ export const NoteViewer = ({ id, title, content, is_archived, created_at, update
   return (
     <>
       <h2 className="text-4xl font-bold">{title}</h2>
+
       <p className="my-2">
-        <img className="inline ps-1 pe-1" src={darkMode ? clockImgW : clockImgB} alt="Last edited"/>
+        <img className="inline ps-1 pe-1" src={darkMode ? clockImgW : clockImgB} alt="Last edited"/> 
         Last edited at: {updated_at}
+      </p>
+      <p className="my-2">
+        <img className="inline ps-1 pe-1" src={darkMode ? archiveImgW : archiveImgB} alt="Archived"/> 
+        Is archived: {is_archived ? 'Yes' : 'No'}
       </p>
 
       <hr className="mx-2 my-4 border-t-2 border-slate-300"/>

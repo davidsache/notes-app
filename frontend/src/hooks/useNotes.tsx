@@ -15,9 +15,7 @@ export const useNotes = () => {
       const res = await fetch(`${API_BASE}/notes.php`, { credentials: 'include' });
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch notes');
-      }
+      if (!res.ok) throw new Error('Failed to fetch notes');
 
       if (Array.isArray(data)) {
         setNotes(data);
@@ -58,13 +56,13 @@ export const useNotes = () => {
       body: JSON.stringify(note)
     });
 
-    if (!res.ok) throw new Error('Failed to delete note');
+    if (!res.ok) throw new Error('Failed to update note');
     setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
   const deleteNote = async (id: number | string) => {
     const res = await fetch(`${API_BASE}/notes.php?id=${id}`, {
-      method: 'PUT',
+      method: 'DELETE',
       credentials: 'include'
     });
     

@@ -1,4 +1,4 @@
 export interface WindowState {
-  currentDashboardWindow: 'notes' | 'settings';
-  onWindowChange: (newWindow: 'notes' | 'settings') => void;
+  currentDashboardWindow: 'allNotes' | 'archivedNotes' | 'settings';
+  onWindowChange: (newWindow: 'allNotes' | 'archivedNotes' | 'settings') => void;
 }

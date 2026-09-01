@@ -29,7 +29,7 @@
       return $note;
     }
 
-    public function updateNote(string $id, string $userId, string $data) {
+    public function updateNote(string $id, string $userId, mixed $data) {
       $existing = $this->getNoteById($id, $userId);
 
       $title = $data["title"] ?? $existing["title"];

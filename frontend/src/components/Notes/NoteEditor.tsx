@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CreateNote } from "../CreateNote";
+import { CreateNote } from "./CreateNote";
 import backW from '../../assets/back_w.svg';
 import { useNavigate } from "react-router-dom";
 import type { Descendant } from "slate";
@@ -42,8 +42,6 @@ export const NoteEditor = () => {
     setSubmitted(false);
     navigate('/');
   };
-
-  console.log(JSON.stringify(editorValue))
 
   return (
     <div className="max-w-4xl mx-auto my-5 p-5 rounded-md bg-white dark:bg-gray-800 border-1 border-slate-200 dark:border-slate-900">

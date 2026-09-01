@@ -30,13 +30,19 @@
       return $stmt->fetch();
     }
 
-    public function update(string $id, string $userId, string $title, string $content, string $isArchived) {
+    public function update(string $id, string $userId, string $title, string $content, bool $isArchived) {
       $stmt = $this->pdo->prepare("
         UPDATE notes
-        SET title = ?, content = ?, is_archived = ?
-        WHERE id = ? AND user_id = ?
+        SET title=:title, content=:content, is_archived=:is_archived
+        WHERE id=:id AND user_id=:user_id
       ");
-      $stmt->execute([$title, $content, $isArchived, $id, $userId]);
+      $stmt->execute([
+        'title' => $title, 
+        'content' => $content, 
+        'is_archived' => $isArchived, 
+        'id' => $id, 
+        'user_id' => $userId
+      ]);
       return $stmt->rowCount() > 0;
     }
 

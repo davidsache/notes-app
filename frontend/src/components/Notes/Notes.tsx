@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "../../hooks/useNotes";
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { type Note } from "../../interfaces/NoteType";
 import { NoteViewer } from "./NoteViewer";
@@ -9,7 +9,11 @@ import { NoteActions } from "./NoteActions";
 import loadingImgW from '../../assets/loading-w.gif';
 import loadingImgB from '../../assets/loading-b.gif';
 
-export const Notes: React.FC = () => {
+interface NotesViewType {
+  notesView: 'allNotes' | 'archivedNotes' | 'settings';
+}
+
+export const Notes: React.FC<NotesViewType> = ({ notesView }) => {
   const { fetchNotes, notes, isLoading } = useNotes();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
@@ -18,6 +22,23 @@ export const Notes: React.FC = () => {
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
+
+  const refetchNotes = () => {
+    setActiveNote(null);
+    fetchNotes();
+  }
+
+  const activeNotes = notes
+    .filter((note) => notesView === 'archivedNotes' ? note.is_archived : note)
+    .map((note) => (
+      <div 
+        key={note.id} 
+        className="hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm p-2 cursor-pointer" 
+        onClick={() => setActiveNote(note)}
+      >
+        <h2 className="font-bold">{note.title}</h2>
+      </div>
+    ));
 
   return (
     <div className="flex flex-row h-screen">
@@ -29,16 +50,9 @@ export const Notes: React.FC = () => {
           + Create New note
         </button>
         <div className="p-2">
-          {isLoading ? <img className="w-8 mt-1" src={darkMode ? loadingImgW : loadingImgB} alt="Loading"/> :
-            notes.map((note) => (
-              <div 
-                key={note.id} 
-                className="hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm p-2 cursor-pointer" 
-                onClick={() => setActiveNote(note)}
-              >
-                <h2 className="font-bold">{note.title}</h2>
-              </div>
-            ))
+          {isLoading 
+            ? <img className="w-8 mt-1" src={darkMode ? loadingImgW : loadingImgB} alt="Loading"/> 
+            : activeNotes
           }
         </div>
       </div>
@@ -56,7 +70,13 @@ export const Notes: React.FC = () => {
               />
             </div>
             <div className="p-2 basis-1/4">
-              <NoteActions/>
+              <NoteActions 
+                id={activeNote.id} 
+                content={activeNote.content} 
+                title={activeNote.title} 
+                is_archived={activeNote.is_archived}
+                refetch={refetchNotes}
+              />
             </div>
           </>
         )

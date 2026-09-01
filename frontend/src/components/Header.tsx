@@ -21,13 +21,31 @@ export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) 
     }
   };
 
+  const headerText = () => {
+    switch (currentDashboardWindow) {
+      case 'allNotes': return 'All notes';
+      case 'archivedNotes': return 'Archived Notes';
+      case 'settings': return 'Settings';
+      default: return 'All notes';
+    }
+  }
+
+  const changeCurrentWindow = () => {
+    if (currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes') {
+      onWindowChange('settings');
+    }
+    else {
+      onWindowChange('allNotes');
+    }
+  }
+
   return (
     <header className="h-16 border-b-2 border-slate-300 flex items-center px-6 flex-shrink-0 bg-gray-100 dark:bg-gray-900">
       <h1 className="font-bold text-xl">
-        {currentDashboardWindow === 'notes' ? 'All Notes' : 'Settings'}
+        {headerText()}
       </h1>
       <div className="ml-auto">
-        {currentDashboardWindow === 'notes' &&
+        {currentDashboardWindow !== 'settings' &&
           <input 
             className="border-2 w-64 h-8 me-2 rounded-md border-slate-300 bg-white dark:bg-gray-500" 
             type="text" 
@@ -35,11 +53,14 @@ export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) 
           />
         }
 
-        <button onClick={() => onWindowChange(currentDashboardWindow === 'notes' ? 'settings' : 'notes')}>
+        <button onClick={changeCurrentWindow}>
           <img 
             className="inline-block align-middle" 
-            src={currentDashboardWindow === 'notes' ? darkMode ? settingsW : settingsB : darkMode ? allNotesW : allNotesB} 
-            alt={currentDashboardWindow === 'notes' ? 'Notes' : 'Settings'}
+            src={currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes' 
+              ? darkMode ? settingsW : settingsB 
+              : darkMode ? allNotesW : allNotesB
+            } 
+            alt={currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes' ? 'Notes' : 'Settings'}
           />
         </button>
 
