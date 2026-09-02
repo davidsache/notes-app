@@ -6,7 +6,7 @@ import { Notes } from "./Notes/Notes";
 
 export const Dashboard: React.FC = () => {
   const [activeWindow, setActiveWindow] = useState<'allNotes' | 'archivedNotes' | 'settings'>('allNotes');
-  console.log(activeWindow)
+  
   return (
     <div className="flex h-screen w-full bg-white dark:bg-gray-800">
       <Sidebar changeNotesView={setActiveWindow}/>
@@ -17,7 +17,7 @@ export const Dashboard: React.FC = () => {
         />
         <main>
           {activeWindow === 'allNotes' || activeWindow === 'archivedNotes' ? 
-            <Notes notesView={activeWindow}/> : <Settings/>
+            <Notes view={activeWindow}/> : <Settings/>
           }
         </main>
       </div>

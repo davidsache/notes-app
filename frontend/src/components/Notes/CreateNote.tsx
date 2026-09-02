@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import isHotkey from 'is-hotkey';
 import { Editable, withReact, useSlate, Slate, ReactEditor } from 'slate-react';
 import { Editor, Transforms, createEditor, type Descendant, Element as SlateElement, type BaseEditor } from 'slate';
@@ -204,7 +204,7 @@ export const CreateNote = ({ initialValue, onChange }: RichTextProps) => {
   const { darkMode } = useTheme();
   const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const [editor] = useState(() => withHistory(withReact(createEditor())));
 
   return (
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>

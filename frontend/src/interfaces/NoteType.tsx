@@ -10,5 +10,5 @@ export interface Note {
 export interface NoteInput {
   title: string;
   content: string;
-  is_archived?: boolean;
+  is_archived: boolean;
 }

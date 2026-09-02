@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "../../hooks/useNotes";
-import { Children, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { type Note } from "../../interfaces/NoteType";
 import { NoteViewer } from "./NoteViewer";
@@ -9,11 +9,11 @@ import { NoteActions } from "./NoteActions";
 import loadingImgW from '../../assets/loading-w.gif';
 import loadingImgB from '../../assets/loading-b.gif';
 
-interface NotesViewType {
-  notesView: 'allNotes' | 'archivedNotes' | 'settings';
+interface ViewType {
+  view: 'allNotes' | 'archivedNotes' | 'settings';
 }
 
-export const Notes: React.FC<NotesViewType> = ({ notesView }) => {
+export const Notes: React.FC<ViewType> = ({ view }) => {
   const { fetchNotes, notes, isLoading } = useNotes();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const Notes: React.FC<NotesViewType> = ({ notesView }) => {
   }
 
   const activeNotes = notes
-    .filter((note) => notesView === 'archivedNotes' ? note.is_archived : note)
+    .filter((note) => view === 'archivedNotes' ? note.is_archived : note)
     .map((note) => (
       <div 
         key={note.id} 
@@ -70,13 +70,7 @@ export const Notes: React.FC<NotesViewType> = ({ notesView }) => {
               />
             </div>
             <div className="p-2 basis-1/4">
-              <NoteActions 
-                id={activeNote.id} 
-                content={activeNote.content} 
-                title={activeNote.title} 
-                is_archived={activeNote.is_archived}
-                refetch={refetchNotes}
-              />
+              <NoteActions note={activeNote} refetch={refetchNotes}/>
             </div>
           </>
         )

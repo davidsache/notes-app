@@ -51,6 +51,14 @@ export const App: React.FC = () => {
             <Route path="/signup" element={<SignUp/>}/>
             <Route path="/newNote" element={<NoteEditor/>}/>
             <Route 
+              path="/edit/:id" 
+              element={
+                <ProtectedRoute>
+                  <NoteEditor/>
+                </ProtectedRoute>
+              }
+            />
+            <Route 
               path="/" 
               element={
                 <ProtectedRoute>

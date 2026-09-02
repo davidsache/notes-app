@@ -37,6 +37,18 @@ export const useNotes = () => {
     }
   }, []);
 
+  const fetchNote = async (id: string | number): Promise<Note> => {
+    const res = await fetch(`${API_BASE}/notes.php?id=${id}`, {
+      credentials: 'include',
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch note data');
+
+    const data = await res.json();
+    const note: Note = Array.isArray(data) ? data[0] : data;
+    return note;
+  };
+
   const createNote = async (note: NoteInput) => {
     const res = await fetch(`${API_BASE}/notes.php`, {
       method: 'POST',
@@ -70,5 +82,5 @@ export const useNotes = () => {
     setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
-  return { notes, isLoading, error, fetchNotes, createNote, updateNote, deleteNote };
+  return { notes, isLoading, error, fetchNotes, fetchNote, createNote, updateNote, deleteNote };
 }

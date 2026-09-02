@@ -37,7 +37,6 @@ export const NoteViewer = ({ id, title, content, is_archived, created_at, update
   return (
     <>
       <h2 className="text-4xl font-bold">{title}</h2>
-
       <p className="my-2">
         <img className="inline ps-1 pe-1" src={darkMode ? clockImgW : clockImgB} alt="Last edited"/> 
         Last edited at: {updated_at}
