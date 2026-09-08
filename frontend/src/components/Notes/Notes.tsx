@@ -19,6 +19,11 @@ export const Notes: React.FC<ViewType> = ({ view }) => {
   const navigate = useNavigate();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
 
+  // When window view changes, hide the active note.
+  useEffect(() => {
+    setActiveNote(null);
+  }, [view])
+
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
