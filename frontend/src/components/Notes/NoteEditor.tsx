@@ -19,11 +19,11 @@ export const NoteEditor: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(isEditMode);
   const [title, setTitle] = useState<string>('');
-  const [editorValue, setEditorValue] = useState<Descendant[]>([]);
+  const [editorValue, setEditorValue] = useState<Descendant[]>([{ type: 'paragraph', children: [{ text: '' }] }]);
   const [isArchived, setIsArchived] = useState<boolean>(false);
 
   const isTitleEmpty = title.trim() === '';
-  const isEditorEmpty = (editorValue ?? []).map(n => Node.string(n)).join('').trim() === '';
+  const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
 
   useEffect(() => {
     if (!isEditMode || !id) {
@@ -35,11 +35,7 @@ export const NoteEditor: React.FC = () => {
     setIsLoading(true);
 
     // The note was passed using the route.
-    if (
-      routerState?.title &&
-      routerState?.content &&
-      routerState?.is_archived !== undefined
-    ) {
+    if (routerState?.title && routerState?.content && routerState?.is_archived !== undefined) {
       setTitle(routerState.title);
       setEditorValue(deserializeFromJson(routerState.content));
       setIsArchived(routerState.is_archived);
@@ -136,11 +132,7 @@ export const NoteEditor: React.FC = () => {
         maxLength={255}
       />
 
-      <CreateNote 
-        key={id}
-        initialValue={editorValue} 
-        onChange={setEditorValue}
-      />
+      <CreateNote initialValue={editorValue} onChange={setEditorValue}/>
 
       <div className="mt-3">
         <button 
