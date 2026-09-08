@@ -21,8 +21,8 @@ interface NoteActionsProps {
 export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
   const { darkMode } = useTheme();
   const { updateNote, deleteNote } = useNotes();
-  const navigate = useNavigate();
   const [actionPending, setActionPending] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleArchiveNote = async () => {
     setActionPending(true);
@@ -47,7 +47,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
   }
 
   const handleEditNote = () => {
-    navigate(`/edit/${note.id}`, { state: { note: note } });
+    navigate(`/edit/${note.id}`, { state: note });
   }
 
   return (

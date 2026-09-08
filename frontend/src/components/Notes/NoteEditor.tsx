@@ -9,67 +9,79 @@ import type { Note } from "../../interfaces/NoteType";
 import backW from '../../assets/back_w.svg';
 
 export const NoteEditor: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();  
+  const { fetchNote, updateNote, createNote } = useNotes();
   const navigate = useNavigate();
   const location = useLocation();
-  const { fetchNote, updateNote, createNote } = useNotes();
+  const routerState = location.state as Note | undefined;
+
   const isEditMode = Boolean(id);
 
-  const [title, setTitle] = useState<string>('');
-  const [editorValue, setEditorValue] = useState<Descendant[]>([{ type: 'paragraph', children: [{ text: '' }] }]);
-  const [isArchived, setIsArchived] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(isEditMode);
+  const [title, setTitle] = useState<string>('');
+  const [editorValue, setEditorValue] = useState<Descendant[]>([]);
+  const [isArchived, setIsArchived] = useState<boolean>(false);
 
-  // Emptiness Check Logic
   const isTitleEmpty = title.trim() === '';
-  const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
+  const isEditorEmpty = (editorValue ?? []).map(n => Node.string(n)).join('').trim() === '';
 
   useEffect(() => {
-    if (!isEditMode) {
+    if (!isEditMode || !id) {
       setIsLoading(false);
       return;
     }
 
-    // If the note was passed, use it.
-    if (location.state?.note) {
-      const note: Note = location.state.note;
-      
-      setTitle(note.title);
-      setEditorValue(deserializeFromJson(note.content));
-      setIsArchived(note.is_archived);
+    let isMounted = true;
+    setIsLoading(true);
 
+    // The note was passed using the route.
+    if (
+      routerState?.title &&
+      routerState?.content &&
+      routerState?.is_archived !== undefined
+    ) {
+      setTitle(routerState.title);
+      setEditorValue(deserializeFromJson(routerState.content));
+      setIsArchived(routerState.is_archived);
       setIsLoading(false);
       return;
     }
 
-    // If the note wasn't passed, fetch it.
     const fetchData = async () => {
-      const note = await fetchNote(id!);
-      
+      const note = await fetchNote(id);
+      if (!isMounted) return;
+
+      if (!note) {
+        navigate('/', { replace: true });
+        return;
+      }
+
       setTitle(note.title);
       setEditorValue(deserializeFromJson(note.content));
       setIsArchived(note.is_archived);
 
       setIsLoading(false);
-      return;
-    }
-    
-    fetchData();
-  }, [id, isEditMode, location.state]);
+    };
 
-  const deserializeFromJson = (jsonString: string) => {
+    // The note needs to be fetched (if it's not possible then navigate to the dashboard).
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, isEditMode, routerState]);
+
+  const deserializeFromJson = (jsonString: string): Descendant[] => {
     try {
       const parsed = JSON.parse(jsonString);
-
-      if (Array.isArray(parsed) && parsed.length > 0) 
-        return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
     catch (error) {
       console.error('Invalid JSON string provided:', error);
     }
 
     return [{ type: 'paragraph', children: [{ text: '' }] }];
-  }
+  };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const plainText = e.target.value.replace(/[\r\n]+/g, ' ');
@@ -92,7 +104,7 @@ export const NoteEditor: React.FC = () => {
         content: JSON.stringify(editorValue),
         is_archived: isArchived
       });
-    }
+    } 
     else {
       await createNote({
         title: title,
@@ -104,6 +116,14 @@ export const NoteEditor: React.FC = () => {
     setIsLoading(false);
     navigate('/');
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto my-5 p-5 text-center dark:text-white">
+        Loading note...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto my-5 p-5 rounded-md bg-white dark:bg-gray-800 border-1 border-slate-200 dark:border-slate-900">
@@ -117,7 +137,7 @@ export const NoteEditor: React.FC = () => {
       />
 
       <CreateNote 
-        key={JSON.stringify(editorValue)}
+        key={id}
         initialValue={editorValue} 
         onChange={setEditorValue}
       />
