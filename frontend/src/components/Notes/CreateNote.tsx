@@ -157,7 +157,7 @@ const BlockButton = ({ format, icon }: { format: BlockType | string; icon: strin
   
   return (
     <button
-      className="my-0 mx-1"
+      className={`my-0 mx-1 ${active ? 'bg-slate-400' : ''}`}
       onMouseDown={event => {
         event.preventDefault();
         toggleBlock(editor, format);
@@ -174,7 +174,7 @@ const MarkButton = ({ format, icon }: { format: MarkType; icon: string }) => {
 
   return (
     <button
-      style={{ color: active ? 'black' : '#ccc', margin: '0 4px' }}
+      className={`my-0 mx-1 ${active ? 'bg-slate-400' : ''}`}
       onMouseDown={event => {
         event.preventDefault();
         toggleMark(editor, format);
