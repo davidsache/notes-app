@@ -1,13 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "../../hooks/useNotes";
 import { useEffect, useState } from "react";
-import { useTheme } from "../../context/ThemeContext";
 import { type Note } from "../../interfaces/NoteType";
 import { NoteViewer } from "./NoteViewer";
 import { NoteActions } from "./NoteActions";
-
-import loadingImgW from '../../assets/loading-w.gif';
-import loadingImgB from '../../assets/loading-b.gif';
+import { Loading } from "../Loading";
 
 interface ViewType {
   view: 'allNotes' | 'archivedNotes' | 'settings';
@@ -15,7 +12,6 @@ interface ViewType {
 
 export const Notes: React.FC<ViewType> = ({ view }) => {
   const { fetchNotes, notes, isLoading } = useNotes();
-  const { darkMode } = useTheme();
   const navigate = useNavigate();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
 
@@ -55,24 +51,14 @@ export const Notes: React.FC<ViewType> = ({ view }) => {
           + Create New note
         </button>
         <div className="p-2">
-          {isLoading 
-            ? <img className="w-8 mt-1" src={darkMode ? loadingImgW : loadingImgB} alt="Loading"/> 
-            : activeNotes
-          }
+          {isLoading ? <Loading/> : activeNotes}
         </div>
       </div>
       {
         activeNote && (
           <>
             <div className="p-2 basis-2/4 border-r-2 border-slate-300">
-              <NoteViewer 
-                id={activeNote.id} 
-                content={activeNote.content} 
-                title={activeNote.title} 
-                created_at={activeNote.created_at}
-                updated_at={activeNote.updated_at}
-                is_archived={activeNote.is_archived}
-              />
+              <NoteViewer note={activeNote}/>
             </div>
             <div className="p-2 basis-1/4">
               <NoteActions note={activeNote} refetch={refetchNotes}/>

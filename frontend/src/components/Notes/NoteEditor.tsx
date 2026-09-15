@@ -5,12 +5,16 @@ import type { Descendant } from "slate";
 import { Node } from "slate";
 import { useNotes } from "../../hooks/useNotes";
 import type { Note } from "../../interfaces/NoteType";
+import { NoteTagEditor } from "../Tags/NoteTagEditor";
+import { useTags } from "../../hooks/useTags";
+import { TagBadge } from "../Tags/TagBadge";
 
 import backW from '../../assets/back_w.svg';
 
 export const NoteEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();  
   const { fetchNote, updateNote, createNote } = useNotes();
+  const { tags, fetchAllTags } = useTags();
   const navigate = useNavigate();
   const location = useLocation();
   const routerState = location.state as Note | undefined;
@@ -21,6 +25,7 @@ export const NoteEditor: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [editorValue, setEditorValue] = useState<Descendant[]>([{ type: 'paragraph', children: [{ text: '' }] }]);
   const [isArchived, setIsArchived] = useState<boolean>(false);
+  const [pendingTagsIds, setPendingTagsIds] = useState<string[]>([]);
 
   const isTitleEmpty = title.trim() === '';
   const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
@@ -28,6 +33,7 @@ export const NoteEditor: React.FC = () => {
   useEffect(() => {
     if (!isEditMode || !id) {
       setIsLoading(false);
+      fetchAllTags();
       return;
     }
 
@@ -65,7 +71,7 @@ export const NoteEditor: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [id, isEditMode, routerState]);
+  }, [id, isEditMode, routerState, fetchAllTags]);
 
   const deserializeFromJson = (jsonString: string): Descendant[] => {
     try {
@@ -91,6 +97,12 @@ export const NoteEditor: React.FC = () => {
     }
   };
 
+  const handleTogglePendingTag = (tagId: string) => {
+    setPendingTagsIds((prev) => 
+      prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
+    );
+  }
+
   const handleSubmitButton = async () => {
     setIsLoading(true);
 
@@ -98,14 +110,16 @@ export const NoteEditor: React.FC = () => {
       await updateNote(id, {
         title: title,
         content: JSON.stringify(editorValue),
-        is_archived: isArchived
+        is_archived: isArchived,
+        tag_ids: []
       });
     } 
     else {
       await createNote({
         title: title,
         content: JSON.stringify(editorValue), 
-        is_archived: false
+        is_archived: false,
+        tag_ids: pendingTagsIds
       });
     }
 
@@ -121,6 +135,9 @@ export const NoteEditor: React.FC = () => {
     );
   }
 
+  const selectedTags = tags.filter((tag) => pendingTagsIds.includes(tag.id));
+  const availableTags = tags.filter((tag) => !pendingTagsIds.includes(tag.id));
+
   return (
     <div className="max-w-4xl mx-auto my-5 p-5 rounded-md bg-white dark:bg-gray-800 border-1 border-slate-200 dark:border-slate-900">
       <input
@@ -133,6 +150,39 @@ export const NoteEditor: React.FC = () => {
       />
 
       <CreateNote initialValue={editorValue} onChange={setEditorValue}/>
+
+      {!isEditMode && (
+        <div className="flex mt-2">
+          <div className="basis-1/2">
+            <h4>Note Tags</h4>
+            {selectedTags.map((tag) => (
+              <TagBadge 
+                key={tag.id}
+                available={false} 
+                onAddedTag={() => handleTogglePendingTag(tag.id)} 
+                onDeletedTag={() => handleTogglePendingTag(tag.id)}
+                tag={tag}
+              />
+            ))}
+          </div>
+          <div className="basis-1/2">
+            <h4>Available Tags</h4>
+            {availableTags.map((tag) => (
+              <TagBadge
+                key={tag.id}
+                available={true}
+                onAddedTag={() => handleTogglePendingTag(tag.id)}
+                onDeletedTag={() => handleTogglePendingTag(tag.id)}
+                tag={tag}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isEditMode && id && (
+        <NoteTagEditor noteId={id}/>
+      )}
 
       <div className="mt-3">
         <button 

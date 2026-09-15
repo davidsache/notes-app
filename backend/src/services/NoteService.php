@@ -6,13 +6,13 @@
       $this->noteModel = $noteModel;
     }
 
-    public function createNote(string $userId, $data) {
-      if (!isset($data["title"]) || !isset($data["content"])) {
-        throw new Exception("Title and content are required");
-      }
+    public function createNote(string $userId, mixed $data) {
+      $title = $data["title"] ?? "";
+      $content = $data["content"] ?? "";
+      $isArchived = isset($data["is_archived"]) && $data["is_archived"] ? 1 : 0;
+      $tagIds = $data["tag_ids"] ?? [];
 
-      $isArchived = isset($data["is_archived"]) ? (int)$data["is_archived"] : 0;
-      return $this->noteModel->create($userId, $data["title"], $data["content"], $isArchived);
+      return $this->noteModel->create($userId, $title, $content, $isArchived, $tagIds);
     }
 
     public function getUserNotes(string $userId) {

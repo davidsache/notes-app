@@ -208,7 +208,7 @@ export const CreateNote = ({ initialValue, onChange }: RichTextProps) => {
 
   return (
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>
-      <div className="pb-5">
+      <div className="pb-2">
         <MarkButton format="bold" icon={darkMode ? boldW : boldB}/>
         <MarkButton format="italic" icon={darkMode ? italicW : italicB}/>
         <MarkButton format="underline" icon={darkMode ? underlineW : underlineB}/>

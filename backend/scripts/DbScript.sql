@@ -194,9 +194,11 @@ ALTER TABLE `notes`
 --
 -- Filtros para la tabla `note_tags`
 --
-ALTER TABLE `note_tags`
-  ADD CONSTRAINT `FK_note_tags_note_id` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `note_tags` 
+  ADD CONSTRAINT `FK_note_tags_note_id` FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON DELETE CASCADE ON UPDATE CASCADE; 
 
+ALTER TABLE `note_tags` 
+  ADD CONSTRAINT `FK_note_tags_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Filtros para la tabla `password_resets`
 --

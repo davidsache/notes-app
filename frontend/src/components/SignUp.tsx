@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
-import loadingImgW from '../assets/loading-w.gif';
-import loadingImgB from '../assets/loading-b.gif';
-import { useTheme } from "../context/ThemeContext";
+import { Loading } from "./Loading";
 
 export const SignUp: React.FC = () => {
   const { signup } = useAuth();
@@ -13,7 +11,6 @@ export const SignUp: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { darkMode } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +80,7 @@ export const SignUp: React.FC = () => {
           />
         </div>
 
-        {submitted && <img className="w-8 mt-1" src={darkMode ? loadingImgW : loadingImgB} alt="Loading gif"/>}
+        {submitted && <Loading/>}
         {error && <div className="text-red-600 mt-1">{error}</div>}
 
         <div className="mt-2">

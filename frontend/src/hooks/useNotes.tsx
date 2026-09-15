@@ -52,7 +52,7 @@ export const useNotes = () => {
     return Array.isArray(data) ? data.find(n => String(n.id) === String(id)) : data;
   };
 
-  const createNote = async (note: NoteInput) => {
+  const createNote = async (note: NoteInput): Promise<string> => {
     const res = await fetch(`${API_BASE}/notes.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -61,6 +61,9 @@ export const useNotes = () => {
     });
 
     if (!res.ok) throw new Error('Failed to create note');
+
+    const createdNote = await res.json();
+    return createdNote.note.id;
   };
 
   const updateNote = async (id: number | string, note: NoteInput) => {

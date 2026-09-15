@@ -6,13 +6,29 @@
       $this->pdo = $pdo;
     }
 
-    public function create(string $userId, string $title, string $content, bool $isArchived) {
-      $stmt = $this->pdo->prepare("
-        INSERT INTO notes (user_id, title, content, is_archived)
-        VALUES (?, ?, ?, ?)
-      ");
-      $stmt->execute([$userId, $title, $content, $isArchived]);
-      return $this->findById($this->pdo->lastInsertId(), $userId);
+    public function create(string $userId, string $title, string $content, bool $isArchived, array $tagIds) {
+      try {
+        $this->pdo->beginTransaction();
+
+        $stmt = $this->pdo->prepare("INSERT INTO notes (user_id, title, content, is_archived) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$userId, $title, $content, $isArchived]);
+
+        $noteId = $this->pdo->lastInsertId();
+
+        if (!empty($tagIds)) {
+          $tagStmt = $this->pdo->prepare("INSERT IGNORE INTO note_tags (note_id, tag_id) VALUES (?, ?)");
+          foreach ($tagIds as $tagId) {
+            $tagStmt->execute([$noteId, $tagId]);
+          }
+        }
+
+        $this->pdo->commit();
+        return $noteId;
+      }
+      catch (PDOException $e) {
+        $this->pdo->rollBack();
+        throw $e;
+      }
     }
 
     public function findAllByUser(string $userId) {
@@ -43,13 +59,13 @@
         'id' => $id, 
         'user_id' => $userId
       ]);
-      return $stmt->rowCount() > 0;
+      return $stmt->rowCount();
     }
 
     public function delete(string $id, string $userId) {
       $stmt = $this->pdo->prepare("DELETE FROM notes WHERE id = ? AND user_id = ?");
       $stmt->execute([$id, $userId]);
-      return $stmt->rowCount() > 0;
+      return $stmt->rowCount();
     }
   }
 ?>
