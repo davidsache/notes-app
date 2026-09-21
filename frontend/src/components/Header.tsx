@@ -1,14 +1,21 @@
-import settingsB from '../assets/settings_b.svg';
-import settingsW from '../assets/settings_w.svg';
-import allNotesB from '../assets/home_b.svg';
-import allNotesW from '../assets/home_w.svg';
-import logoutB from '../assets/logout_b.svg';
-import logoutW from '../assets/logout_w.svg';
 import { type WindowState } from '../interfaces/WindowState';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { Search } from './Search';
 
-export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) => {
+import settingsB from '../assets/settings_b.svg';
+import settingsW from '../assets/settings_w.svg';
+import homeB from '../assets/home_b.svg';
+import homeW from '../assets/home_w.svg';
+import logoutB from '../assets/logout_b.svg';
+import logoutW from '../assets/logout_w.svg';
+
+interface HeaderProps {
+  windowState: WindowState;
+  makeNotesSearch: (searchText: string) => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch }) => {
   const { logout } = useAuth();
   const { darkMode } = useTheme();
 
@@ -21,8 +28,8 @@ export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) 
     }
   };
 
-  const headerText = () => {
-    switch (currentDashboardWindow) {
+  const headerText = (): string => {
+    switch (windowState.currentDashboardWindow) {
       case 'allNotes': return 'All notes';
       case 'archivedNotes': return 'Archived Notes';
       case 'settings': return 'Settings';
@@ -31,11 +38,11 @@ export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) 
   }
 
   const changeCurrentWindow = () => {
-    if (currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes') {
-      onWindowChange('settings');
+    if (windowState.currentDashboardWindow === 'allNotes' || windowState.currentDashboardWindow === 'archivedNotes') {
+      windowState.onWindowChange('settings');
     }
     else {
-      onWindowChange('allNotes');
+      windowState.onWindowChange('allNotes');
     }
   }
 
@@ -45,22 +52,21 @@ export const Header = ({ currentDashboardWindow, onWindowChange }: WindowState) 
         {headerText()}
       </h1>
       <div className="ml-auto">
-        {currentDashboardWindow !== 'settings' &&
-          <input 
-            className="border-2 w-64 h-8 me-2 rounded-md border-slate-300 bg-white dark:bg-gray-500" 
-            type="text" 
-            placeholder="Search by title, content, or tags..."
-          />
-        }
-
+        {windowState.currentDashboardWindow !== 'settings' && (
+          <Search makeSearch={text => makeNotesSearch(text)}/>
+        )}
         <button onClick={changeCurrentWindow}>
           <img 
             className="inline-block align-middle" 
-            src={currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes' 
+            src={
+              windowState.currentDashboardWindow === 'allNotes' || windowState.currentDashboardWindow === 'archivedNotes' 
               ? darkMode ? settingsW : settingsB 
-              : darkMode ? allNotesW : allNotesB
+              : darkMode ? homeW : homeB
             } 
-            alt={currentDashboardWindow === 'allNotes' || currentDashboardWindow === 'archivedNotes' ? 'Notes' : 'Settings'}
+            alt={
+              windowState.currentDashboardWindow === 'allNotes' || 
+              windowState.currentDashboardWindow === 'archivedNotes' ? 'Notes' : 'Settings'
+            }
           />
         </button>
 

@@ -5,6 +5,7 @@ export interface Note {
   is_archived: boolean;
   created_at: string;
   updated_at: string;
+  tag_names?: string;
 }
 
 export interface NoteInput {

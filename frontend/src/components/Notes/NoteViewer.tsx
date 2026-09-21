@@ -1,6 +1,6 @@
 import { Editable, Slate, withReact } from "slate-react";
 import type { Note } from '../../interfaces/NoteType';
-import { createEditor } from 'slate';
+import { createEditor, type Descendant } from 'slate';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { Element } from '../Slate/Element';
@@ -18,7 +18,7 @@ interface NoteViewerProps {
   note: Note;
 }
 
-const deserializeFromJson = (jsonString: string) => {
+const deserializeFromJson = (jsonString: string): Descendant[] => {
   try {
     const parsed = JSON.parse(jsonString);
 
@@ -49,30 +49,22 @@ export const NoteViewer: React.FC<NoteViewerProps> = ({ note }) => {
   return (
     <>
       <h2 className="text-4xl font-bold">{note.title}</h2>
+      {noteTags.length > 0 && (
+        <p>
+          <img className="inline ps-1 pe-1" src={darkMode ? labelImgW : labelImgB}/>
+          Tags:
+          {noteTags.map((tag, index) => (
+            <span key={tag.id}>
+              &nbsp;{tag.name}
+              {index < noteTags.length-1 ? ',' : ''}
+            </span>
+          ))}
+        </p>
+      )}
       <p className="my-2">
         <img className="inline ps-1 pe-1" src={darkMode ? clockImgW : clockImgB} alt="Last edited"/> 
         Last edited at: {note.updated_at}
       </p>
-      <p className="my-2">
-        <img className="inline ps-1 pe-1" src={darkMode ? archiveImgW : archiveImgB} alt="Archived"/> 
-        Is archived: {note.is_archived ? 'Yes' : 'No'}
-      </p>
-      {
-        noteTags.length > 0 && (
-          <p>
-            <img className="inline ps-1 pe-1" src={darkMode ? labelImgW : labelImgB}/>
-            Tags:
-            {
-              noteTags.map((tag, index) => (
-                <span key={tag.id}>
-                  &nbsp;{tag.name}
-                  {index < noteTags.length-1 ? ',' : ''}
-                </span>
-              ))
-            }
-          </p>
-        )
-      }
       <hr className="mx-2 my-4 border-t-2 border-slate-300"/>
 
       <Slate key={note.id} initialValue={value} editor={editor}>

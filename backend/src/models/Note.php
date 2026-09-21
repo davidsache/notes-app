@@ -32,12 +32,18 @@
     }
 
     public function findAllByUser(string $userId) {
-      $stmt = $this->pdo->prepare("
-        SELECT id, title, content, is_archived, created_at, updated_at FROM notes 
-        WHERE user_id = ? ORDER BY created_at DESC
-      ");
+      $stmt = $this->pdo->prepare('
+        SELECT n.id, n.title, n.content, n.is_archived, n.created_at, n.updated_at,
+          GROUP_CONCAT(t.name SEPARATOR ", ") as tag_names
+        FROM notes n
+        LEFT JOIN note_tags nt ON n.id = nt.note_id
+        LEFT JOIN tags t ON nt.tag_id = t.id
+        WHERE n.user_id = ?
+        GROUP BY n.id
+        ORDER BY n.created_at DESC
+      ');
       $stmt->execute([$userId]);
-      return $stmt->fetchAll();
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findById(string $id, string $userId) {

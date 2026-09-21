@@ -4,7 +4,7 @@
 
   $userModel = new User($pdo);
   $authService = new AuthService($userModel);
-  $controller = new AuthController($authService);
+  $authController = new AuthController($authService);
 
-  $controller->signup();
+  $authController->signup();
 ?>

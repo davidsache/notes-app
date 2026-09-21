@@ -1,16 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useNotes } from "../../hooks/useNotes";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type Note } from "../../interfaces/NoteType";
 import { NoteViewer } from "./NoteViewer";
 import { NoteActions } from "./NoteActions";
 import { Loading } from "../Loading";
+import { extractSlateText } from "../../utils/slateParser";
 
-interface ViewType {
+interface NotesProps {
   view: 'allNotes' | 'archivedNotes' | 'settings';
+  search: string | undefined;
 }
 
-export const Notes: React.FC<ViewType> = ({ view }) => {
+export const Notes: React.FC<NotesProps> = ({ view, search }) => {
   const { fetchNotes, notes, isLoading } = useNotes();
   const navigate = useNavigate();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
@@ -18,7 +20,7 @@ export const Notes: React.FC<ViewType> = ({ view }) => {
   // When window view changes, hide the active note.
   useEffect(() => {
     setActiveNote(null);
-  }, [view])
+  }, [view, search])
 
   useEffect(() => {
     fetchNotes();
@@ -29,17 +31,22 @@ export const Notes: React.FC<ViewType> = ({ view }) => {
     fetchNotes();
   }
 
-  const activeNotes = notes
-    .filter((note) => view === 'archivedNotes' ? note.is_archived : note)
-    .map((note) => (
-      <div 
-        key={note.id} 
-        className="hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm p-2 cursor-pointer" 
-        onClick={() => setActiveNote(note)}
-      >
-        <h2 className="font-bold">{note.title}</h2>
-      </div>
-    ));
+  const filteredNotes = useMemo(() => {
+    if (!search) {
+      return notes.filter((note) => view === 'archivedNotes' ? note.is_archived : note);
+    }
+
+    const term = search.toLowerCase();
+
+    return notes.filter((note) => {
+      const titleMatch = note.title.toLowerCase().includes(term);
+      const contentMatch = extractSlateText(note.content).toLowerCase().includes(term);
+      const tagsMatch = note.tag_names ? note.tag_names.toLowerCase().includes(term) : false;
+      return titleMatch || contentMatch || tagsMatch;
+    }).filter((note) => view === 'archivedNotes' ? note.is_archived : note);
+  }, [notes, search, view]);
+
+  if (isLoading && notes.length === 0) return <Loading/>;
 
   return (
     <div className="flex flex-row h-screen">
@@ -51,7 +58,15 @@ export const Notes: React.FC<ViewType> = ({ view }) => {
           + Create New note
         </button>
         <div className="p-2">
-          {isLoading ? <Loading/> : activeNotes}
+          {filteredNotes.map((note) => (
+            <div 
+              key={note.id} 
+              className="hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm p-2 cursor-pointer" 
+              onClick={() => setActiveNote(note)}
+            >
+              <h2 className="font-bold">{note.title}</h2>
+            </div>
+          ))}
         </div>
       </div>
       {

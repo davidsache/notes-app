@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-08-2026 a las 19:19:53
+-- Tiempo de generación: 19-09-2026 a las 11:25:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -96,7 +96,6 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `user_settings` (
-  `id` smallint(5) UNSIGNED NOT NULL,
   `user_id` smallint(5) UNSIGNED NOT NULL,
   `color_theme` varchar(30) NOT NULL DEFAULT 'light',
   `font_theme` varchar(30) NOT NULL DEFAULT 'sans-serif'
@@ -117,7 +116,8 @@ ALTER TABLE `notes`
 -- Indices de la tabla `note_tags`
 --
 ALTER TABLE `note_tags`
-  ADD PRIMARY KEY (`note_id`,`tag_id`);
+  ADD PRIMARY KEY (`note_id`,`tag_id`),
+  ADD KEY `FK_note_tags_tag_id` (`tag_id`);
 
 --
 -- Indices de la tabla `password_resets`
@@ -144,8 +144,7 @@ ALTER TABLE `users`
 -- Indices de la tabla `user_settings`
 --
 ALTER TABLE `user_settings`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `UQ_user_id` (`user_id`);
+  ADD PRIMARY KEY (`user_id`) USING BTREE;
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -176,12 +175,6 @@ ALTER TABLE `users`
   MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `user_settings`
---
-ALTER TABLE `user_settings`
-  MODIFY `id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- Restricciones para tablas volcadas
 --
 
@@ -194,11 +187,10 @@ ALTER TABLE `notes`
 --
 -- Filtros para la tabla `note_tags`
 --
-ALTER TABLE `note_tags` 
-  ADD CONSTRAINT `FK_note_tags_note_id` FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON DELETE CASCADE ON UPDATE CASCADE; 
+ALTER TABLE `note_tags`
+  ADD CONSTRAINT `FK_note_tags_note_id` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_note_tags_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `note_tags` 
-  ADD CONSTRAINT `FK_note_tags_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Filtros para la tabla `password_resets`
 --
@@ -215,7 +207,7 @@ ALTER TABLE `tags`
 -- Filtros para la tabla `user_settings`
 --
 ALTER TABLE `user_settings`
-  ADD CONSTRAINT `FK_user_settings_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_user_settings_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

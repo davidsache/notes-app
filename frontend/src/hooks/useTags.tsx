@@ -13,6 +13,7 @@ export const useTags = () => {
     const res = await fetch(`${API_BASE}/tags.php`, { credentials: 'include' });
 
     if (!res.ok) {
+      setIsLoading(false);
       return;
     }
 
