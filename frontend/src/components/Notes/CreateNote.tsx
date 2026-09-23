@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import isHotkey from 'is-hotkey';
 import { Editable, withReact, useSlate, Slate, ReactEditor } from 'slate-react';
 import { Editor, Transforms, createEditor, type Descendant, Element as SlateElement, type BaseEditor } from 'slate';
@@ -6,6 +6,7 @@ import { withHistory, HistoryEditor } from 'slate-history';
 import { useTheme } from '../../context/ThemeContext';
 import { Element } from '../Slate/Element';
 import { Leaf } from '../Slate/Leaf';
+import type { UserSettings } from '../../interfaces/UserSettings';
 
 import boldB from '../../assets/slate/bold_b.svg';
 import boldW from '../../assets/slate/bold_w.svg';
@@ -195,33 +196,41 @@ const onEditableKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, editor: E
   }
 }
 
-interface RichTextProps {
+interface CreateNoteProps {
   initialValue: Descendant[];
+  userSettings: UserSettings | undefined;
   onChange: (value: Descendant[]) => void;
 }
 
-export const CreateNote = ({ initialValue, onChange }: RichTextProps) => {
+export const CreateNote: React.FC<CreateNoteProps> = ({ initialValue, userSettings, onChange }) => {
   const { darkMode } = useTheme();
   const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
   const [editor] = useState(() => withHistory(withReact(createEditor())));
+  const [userColor, setUserColor] = useState<string>('Auto');
+
+  const isDark = userColor === 'Black' || userColor !== 'White' && darkMode;
+
+  useEffect(() => {
+    if (userSettings) setUserColor(userSettings.color_theme);
+  }, [userSettings]);
 
   return (
     <Slate editor={editor} initialValue={initialValue} onChange={onChange}>
       <div className="pb-2">
-        <MarkButton format="bold" icon={darkMode ? boldW : boldB}/>
-        <MarkButton format="italic" icon={darkMode ? italicW : italicB}/>
-        <MarkButton format="underline" icon={darkMode ? underlineW : underlineB}/>
-        <MarkButton format="code" icon={darkMode ? codeW : codeB}/>
-        <BlockButton format="heading-one" icon={darkMode ? headingOneW : headingOneB}/>
-        <BlockButton format="heading-two" icon={darkMode ? headingTwoW : headingTwoB}/>
-        <BlockButton format="block-quote" icon={darkMode ? quotesW : quotesB}/>
-        <BlockButton format="numbered-list" icon={darkMode ? numberedListW : numberedListB}/>
-        <BlockButton format="bulleted-list" icon={darkMode ? bulletListW : bulletListB}/>
-        <BlockButton format="left" icon={darkMode ? alignLeftW : alignLeftB}/>
-        <BlockButton format="center" icon={darkMode ? alignCenterW : alignCenterB}/>
-        <BlockButton format="right" icon={darkMode ? alignRightW : alignRightB}/>
-        <BlockButton format="justify" icon={darkMode ? alignJustifyW : alignJustifyB}/>
+        <MarkButton format="bold" icon={isDark ? boldW : boldB}/>
+        <MarkButton format="italic" icon={isDark ? italicW : italicB}/>
+        <MarkButton format="underline" icon={isDark ? underlineW : underlineB}/>
+        <MarkButton format="code" icon={isDark ? codeW : codeB}/>
+        <BlockButton format="heading-one" icon={isDark ? headingOneW : headingOneB}/>
+        <BlockButton format="heading-two" icon={isDark ? headingTwoW : headingTwoB}/>
+        <BlockButton format="block-quote" icon={isDark ? quotesW : quotesB}/>
+        <BlockButton format="numbered-list" icon={isDark ? numberedListW : numberedListB}/>
+        <BlockButton format="bulleted-list" icon={isDark ? bulletListW : bulletListB}/>
+        <BlockButton format="left" icon={isDark ? alignLeftW : alignLeftB}/>
+        <BlockButton format="center" icon={isDark ? alignCenterW : alignCenterB}/>
+        <BlockButton format="right" icon={isDark ? alignRightW : alignRightB}/>
+        <BlockButton format="justify" icon={isDark ? alignJustifyW : alignJustifyB}/>
       </div>
       <Editable
         renderElement={renderElement}

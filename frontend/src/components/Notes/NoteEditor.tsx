@@ -8,6 +8,9 @@ import type { Note } from "../../interfaces/NoteType";
 import { NoteTagEditor } from "../Tags/NoteTagEditor";
 import { useTags } from "../../hooks/useTags";
 import { TagBadge } from "../Tags/TagBadge";
+import { useUsers } from "../../hooks/useUsers";
+import { mainStyles } from "../../utils/noteTheme";
+import { deserializeFromJson } from "../../utils/slateFunctions";
 
 import backW from '../../assets/back_w.svg';
 
@@ -30,6 +33,8 @@ export const NoteEditor: React.FC = () => {
   const isTitleEmpty = title.trim() === '';
   const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
 
+  const { userSettings, fetchUserSettings } = useUsers();
+  
   useEffect(() => {
     if (!isEditMode || !id) {
       setIsLoading(false);
@@ -73,17 +78,9 @@ export const NoteEditor: React.FC = () => {
     };
   }, [id, isEditMode, routerState, fetchAllTags]);
 
-  const deserializeFromJson = (jsonString: string): Descendant[] => {
-    try {
-      const parsed = JSON.parse(jsonString);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-    catch (error) {
-      console.error('Invalid JSON string provided:', error);
-    }
-
-    return [{ type: 'paragraph', children: [{ text: '' }] }];
-  };
+  useEffect(() => {
+    fetchUserSettings();
+  }, [fetchUserSettings]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const plainText = e.target.value.replace(/[\r\n]+/g, ' ');
@@ -127,6 +124,8 @@ export const NoteEditor: React.FC = () => {
     navigate('/');
   };
 
+
+
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto my-5 p-5 text-center dark:text-white">
@@ -139,7 +138,7 @@ export const NoteEditor: React.FC = () => {
   const availableTags = tags.filter((tag) => !pendingTagsIds.includes(tag.id));
 
   return (
-    <div className="max-w-4xl mx-auto my-5 p-5 rounded-md bg-white dark:bg-gray-800 border-1 border-slate-200 dark:border-slate-900">
+    <div className={mainStyles('max-w-4xl mx-auto my-5 p-5 rounded-md border-1 border-slate-200 dark:border-slate-900', userSettings)}>
       <input
         type="text"
         value={title}
@@ -149,7 +148,11 @@ export const NoteEditor: React.FC = () => {
         maxLength={255}
       />
 
-      <CreateNote initialValue={editorValue} onChange={setEditorValue}/>
+      <CreateNote 
+        initialValue={editorValue} 
+        userSettings={userSettings} 
+        onChange={setEditorValue}
+      />
 
       {!isEditMode && (
         <div className="flex mt-2">

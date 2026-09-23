@@ -20,25 +20,12 @@ export const TagBadge: React.FC<TagBadgeProps> = ({ tag, available, onAddedTag, 
     }
   }, []);
 
-  const addTagNote = () => {
-    console.log('add:', tag)
-    onAddedTag();
-  }
-
-  const deleteTagNote = () => {
-    console.log('delete:', tag)
-    onDeletedTag();
-  }
-
   return (
-    <div>
-      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colorStyles}`}>
-        {available 
-          ? <button onClick={addTagNote} className="font-bold me-1 hover:text-slate-900">+</button> 
-          : <button onClick={deleteTagNote} className="font-bold me-1 hover:text-slate-900">x</button>
-        } 
+    <button onClick={available ? onAddedTag : onDeletedTag} className="me-1">
+      <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colorStyles}`}>
+        <span className="font-bold hover:text-slate-900">{available ? '+' : 'x'}</span>&nbsp;
         {tag.name}
-      </span>
-    </div>
-  )
+      </div>
+    </button> 
+  );
 }

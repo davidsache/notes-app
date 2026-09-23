@@ -29,7 +29,8 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
     await updateNote(note.id, {
       content: note.content,
       title: note.title,
-      is_archived: !note.is_archived
+      is_archived: !note.is_archived,
+      tag_ids: []
     });
 
     setActionPending(false);

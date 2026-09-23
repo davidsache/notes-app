@@ -14,3 +14,17 @@ export const extractSlateText = (content: string): string => {
 
   return '';
 };
+
+export const deserializeFromJson = (jsonString: string): Descendant[] => {
+  try {
+    const parsed = JSON.parse(jsonString);
+
+    if (Array.isArray(parsed) && parsed.length > 0) 
+      return parsed;
+  }
+  catch (error) {
+    console.error('Invalid JSON string provided:', error);
+  }
+
+  return [{ type: 'paragraph', children: [{ text: '' }] }];
+}

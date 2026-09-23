@@ -5,7 +5,7 @@ import { type Note } from "../../interfaces/NoteType";
 import { NoteViewer } from "./NoteViewer";
 import { NoteActions } from "./NoteActions";
 import { Loading } from "../Loading";
-import { extractSlateText } from "../../utils/slateParser";
+import { extractSlateText } from "../../utils/slateFunctions";
 
 interface NotesProps {
   view: 'allNotes' | 'archivedNotes' | 'settings';
@@ -46,7 +46,9 @@ export const Notes: React.FC<NotesProps> = ({ view, search }) => {
     }).filter((note) => view === 'archivedNotes' ? note.is_archived : note);
   }, [notes, search, view]);
 
-  if (isLoading && notes.length === 0) return <Loading/>;
+  if (isLoading && notes.length === 0) {
+    return <div className="m-2"><Loading/></div>;
+  }
 
   return (
     <div className="flex flex-row h-screen">
@@ -72,7 +74,7 @@ export const Notes: React.FC<NotesProps> = ({ view, search }) => {
       {
         activeNote && (
           <>
-            <div className="p-2 basis-2/4 border-r-2 border-slate-300">
+            <div className="basis-2/4 border-r-2 border-slate-300">
               <NoteViewer note={activeNote}/>
             </div>
             <div className="p-2 basis-1/4">

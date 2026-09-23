@@ -5,7 +5,7 @@ import { Loading } from "./Loading";
 
 export const Settings: React.FC = () => {
   const FONTS: string[] = ['Arial', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Times New Roman', 'Georgia', 'Garamond', 'Courier New', 'Brush Script MT'];
-  const COLORS: string[] = ['White', 'Black', 'Blue', 'Red', 'Green'];
+  const COLORS: string[] = ['Auto', 'White', 'Black', 'Blue', 'Red', 'Green'];
 
   const { darkMode, toggleTheme } = useTheme();
   const { isLoading, userSettings, fetchUserSettings, addUserSettings, updateUserSettings } = useUsers();
