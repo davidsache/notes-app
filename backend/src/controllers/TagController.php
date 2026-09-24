@@ -99,15 +99,21 @@
       $noteId = $_GET["note_id"] ?? null;
       $tagId = $_GET["tag_id"] ?? null;
 
-      if (!$noteId || !$tagId) {
-        http_response_code(400);
-        echo json_encode(["error" => "note_id and tag_id required"]);
+      if ($noteId && $tagId) {
+        $success = $this->tagService->deleteNoteTag($noteId, $tagId, $userId);
+        echo json_encode(["success" => $success]);
         return;
       }
-
-      $success = $this->tagService->deleteNoteTag($noteId, $tagId, $userId);
-      echo json_encode(["success" => $success]);
-      return;
+      else if ($tagId) {
+        $success = $this->tagService->deleteTag($tagId, $userId);
+        echo json_encode(["success" => $success]);
+        return;
+      }
+      else {
+        http_response_code(400);
+        echo json_encode(["error" => "tag_id is required always"]);
+        return;
+      }
     }
   }
 ?>

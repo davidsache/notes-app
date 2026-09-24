@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useTags } from "../../hooks/useTags";
 
-export const CreateTag: React.FC = () => {
+interface CreateTagProps {
+  refetchTags: () => void;
+}
+
+export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
   const { addTag } = useTags();
   const [currentInput, setCurrentInput] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -11,7 +15,8 @@ export const CreateTag: React.FC = () => {
       setSubmitting(true);
 
       await addTag(currentInput);
-      
+      refetchTags();
+
       setCurrentInput('');
       setSubmitting(false);
     }

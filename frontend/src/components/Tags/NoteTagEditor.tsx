@@ -7,7 +7,7 @@ interface NoteTagEditorProps {
 }
 
 export const NoteTagEditor: React.FC<NoteTagEditorProps> = ({ noteId }) => {
-  const { isLoading, tags, noteTags, fetchAllTags, fetchNoteTags, addNoteTag, deleteNoteTag } = useTags();
+  const { tags, noteTags, fetchAllTags, fetchNoteTags, addNoteTag, deleteNoteTag } = useTags();
 
   useEffect(() => {
     fetchAllTags();

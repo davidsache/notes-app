@@ -59,7 +59,7 @@ export const useTags = () => {
   }
 
   const deleteTag = async (id: string) => {
-    await fetch(`${API_BASE}/tags.php?id=${id}`, {
+    await fetch(`${API_BASE}/tags.php?tag_id=${id}`, {
       method: 'DELETE',
       credentials: 'include'
     });
