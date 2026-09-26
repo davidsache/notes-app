@@ -28,7 +28,7 @@ export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
   };
 
   return (
-    <div className="my-4">
+    <div className="my-2">
       <input 
         type="text"
         value={currentInput}

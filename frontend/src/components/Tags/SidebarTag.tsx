@@ -1,35 +1,23 @@
 import { useTheme } from "../../context/ThemeContext";
 import type { Tag } from "../../interfaces/TagType";
-import { useTags } from "../../hooks/useTags";
-import { useState } from "react";
 
-import deleteB from '../../assets/delete_b.svg';
-import deleteW from '../../assets/delete_w.svg';
+import labelB from '../../assets/label_b.svg';
+import labelW from '../../assets/label_w.svg';
 
 interface SidebarTagProps {
   tag: Tag;
-  refetchTags: () => void;
+  tagToFilterBy: (tag: Tag) => void;
 }
 
-export const SidebarTag: React.FC<SidebarTagProps> = ({ tag, refetchTags }) => {
+export const SidebarTag: React.FC<SidebarTagProps> = ({ tag, tagToFilterBy }) => {
   const { darkMode } = useTheme();
-  const { deleteTag } = useTags();
-  const [submitting, setSubmitting] = useState<boolean>(false);
-
-  const handleDeleteTag = async () => {
-    if (confirm(`Do you wish to delete the tag '${tag.name}'? It will be removed from all associated notes as well.`)) {
-      setSubmitting(true);
-      await deleteTag(tag.id);
-      refetchTags();
-    }
-  }
 
   return (
     <div>
-      <button className="align-middle" onClick={handleDeleteTag} disabled={submitting}>
-        <img src={darkMode ? deleteW : deleteB} alt="Delete tag"/>
+      <button className="align-middle hover:text-slate-500" onClick={() => tagToFilterBy(tag)}>
+        <img className="inline pe-1" src={darkMode ? labelW : labelB} alt="Access tag"/>
+        {tag.name}
       </button>
-      {tag.name}
     </div>
   );
 }
