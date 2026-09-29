@@ -13,6 +13,7 @@ import { mainStyles } from "../../utils/noteTheme";
 import { deserializeFromJson } from "../../utils/slateFunctions";
 
 import backW from '../../assets/back_w.svg';
+import { ErrorText } from "../ErrorText";
 
 export const NoteEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();  
@@ -26,12 +27,13 @@ export const NoteEditor: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(isEditMode);
   const [title, setTitle] = useState<string>('');
+
   const [editorValue, setEditorValue] = useState<Descendant[]>([{ type: 'paragraph', children: [{ text: '' }] }]);
   const [isArchived, setIsArchived] = useState<boolean>(false);
   const [pendingTagsIds, setPendingTagsIds] = useState<string[]>([]);
 
-  const isTitleEmpty = title.trim() === '';
-  const isEditorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
+  const [titleError, setTitleError] = useState<string>();
+  const [editorError, setEditorError] = useState<string>('');
 
   const { userSettings, fetchUserSettings } = useUsers();
   
@@ -83,6 +85,8 @@ export const NoteEditor: React.FC = () => {
   }, [fetchUserSettings]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (titleError) setTitleError('');
+
     const plainText = e.target.value.replace(/[\r\n]+/g, ' ');
     if (plainText.length >= 255) return;
     setTitle(plainText);
@@ -102,6 +106,20 @@ export const NoteEditor: React.FC = () => {
 
   const handleSubmitButton = async () => {
     setIsLoading(true);
+
+    const titleEmpty = title.trim() === '';
+    const editorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
+
+    if (titleEmpty) setTitleError('The note title is empty.');
+    else setTitleError('');
+
+    if (editorEmpty) setEditorError('The note content is empty.');
+    else setEditorError('');
+
+    if (titleEmpty || editorEmpty) {
+      setIsLoading(false);
+      return;
+    }
 
     if (isEditMode && id) {
       await updateNote(id, {
@@ -124,8 +142,6 @@ export const NoteEditor: React.FC = () => {
     navigate('/');
   };
 
-
-
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto my-5 p-5 text-center dark:text-white">
@@ -147,17 +163,27 @@ export const NoteEditor: React.FC = () => {
         className="w-full text-4xl font-bold border-2 border-slate-300 rounded-md outline-none mb-3 p-2"
         maxLength={255}
       />
+      {titleError && (
+        <div className="mb-2">
+          <ErrorText error={titleError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
+        </div>
+      )}
 
       <CreateNote 
         initialValue={editorValue} 
         userSettings={userSettings} 
         onChange={setEditorValue}
       />
+      {editorError && (
+        <div className="my-2">
+          <ErrorText error={editorError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
+        </div>
+      )}
 
       {!isEditMode && (
         <div className="flex mt-2">
           <div className="basis-1/2">
-            <h4>Note Tags</h4>
+            <h4 className="underline">Note Tags</h4>
             {selectedTags.map((tag) => (
               <TagBadge 
                 key={tag.id}
@@ -169,7 +195,7 @@ export const NoteEditor: React.FC = () => {
             ))}
           </div>
           <div className="basis-1/2">
-            <h4>Available Tags</h4>
+            <h4 className="underline">Available Tags</h4>
             {availableTags.map((tag) => (
               <TagBadge
                 key={tag.id}
@@ -197,7 +223,7 @@ export const NoteEditor: React.FC = () => {
         <button 
           className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded align-middle" 
           onClick={handleSubmitButton}
-          disabled={isTitleEmpty || isEditorEmpty || isLoading}
+          disabled={isLoading}
         >
           {isEditMode ? 'Update note' : 'Save note'}
         </button>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Loading } from './Loading';
+import { ErrorText } from './ErrorText';
 
 export const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -68,7 +69,7 @@ export const LoginForm: React.FC = () => {
         </div>
 
         {submitted && <Loading/>}
-        {error && <div className="text-red-600 mt-1">{error}</div>}
+        {error && <ErrorText error={error} darkerText={false}/>}
 
         <div className="mt-2">
           <button 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Loading } from "./Loading";
+import { ErrorText } from "./ErrorText";
 
 export const SignUp: React.FC = () => {
   const { signup } = useAuth();
@@ -81,7 +82,7 @@ export const SignUp: React.FC = () => {
         </div>
 
         {submitted && <Loading/>}
-        {error && <div className="text-red-600 mt-1">{error}</div>}
+        {error && <ErrorText error={error} darkerText={false}/>}
 
         <div className="mt-2">
           <button 
