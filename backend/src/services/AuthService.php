@@ -38,6 +38,18 @@
       return $this->userModel->signUp($email, $username, $password);
     }
 
+    public function resetPasswordRequest(string $email): bool {
+      return $this->userModel->resetPasswordRequest($email);
+    }
+
+    public function getPasswordResetRequest(string $token) {
+      return $this->userModel->getPasswordResetRequest($token);
+    }
+
+    public function changePassword(string $userId, string $password) {
+      return $this->userModel->changePassword($userId, $password);
+    }
+
     public function terminate() {
       $_SESSION = array();
 

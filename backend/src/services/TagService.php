@@ -27,8 +27,8 @@
       return $this->tagModel->deleteTagFromNote($noteId, $tagId, $userId);
     }
 
-    public function getAllTags() {
-      return $this->tagModel->getAllTags();
+    public function getAllTags(string $userId) {
+      return $this->tagModel->getAllTags($userId);
     }
 
     public function deleteTag(string $id, string $userId) {

@@ -59,7 +59,7 @@
       }
       // Get all the tags
       else {
-        $tags = $this->tagService->getAllTags();
+        $tags = $this->tagService->getAllTags($userId);
 
         if (!$tags) {
           http_response_code(404);

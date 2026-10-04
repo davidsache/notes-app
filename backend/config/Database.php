@@ -1,4 +1,6 @@
 <?php
+  date_default_timezone_set('UTC');
+  
   $server = "127.0.0.1";
   $db = "notes-app";
   $user = "root";

@@ -51,9 +51,9 @@
       return $stmt->fetchAll();
     }
 
-    public function getAllTags() {
-      $stmt = $this->pdo->prepare("SELECT id, name FROM tags");
-      $stmt->execute();
+    public function getAllTags(string $userId) {
+      $stmt = $this->pdo->prepare("SELECT id, name FROM tags WHERE user_id = ?");
+      $stmt->execute([$userId]);
       return $stmt->fetchAll();
     }
 

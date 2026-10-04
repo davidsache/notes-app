@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Loading } from './Loading';
-import { ErrorText } from './ErrorText';
+import { Loading } from '../Loading';
+import { ErrorText } from '../ErrorText';
 
-export const LoginForm: React.FC = () => {
+export const Login: React.FC = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSubmitted(true);
@@ -72,17 +73,25 @@ export const LoginForm: React.FC = () => {
         {error && <ErrorText error={error} darkerText={false}/>}
 
         <div className="mt-2">
-          <button 
-            type="submit" 
-            className="p-2 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 disabled:bg-slate-300 disabled:border-slate-500 dark:hover:border-sky-500 dark:hover:bg-sky-700" 
-            disabled={submitted}
-          >
-            Log In
-          </button>
-          <p className="inline ms-2">
+          <p>
+            <button 
+              type="submit" 
+              className="p-2 rounded-sm border w-full border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 disabled:bg-slate-300 disabled:border-slate-500 dark:hover:border-sky-500 dark:hover:bg-sky-700" 
+              disabled={submitted}
+            >
+              Log In
+            </button>
+          </p>
+          <p className="mt-2">
             Not registered?&nbsp;
             <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
               Sign up
+            </NavLink>
+          </p>
+          <p className="mt-2">
+            Forgot your password?&nbsp;
+            <NavLink to="/reset" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
+              Reset password
             </NavLink>
           </p>
         </div>
