@@ -9,49 +9,53 @@
       $this->pdo = $pdo;
     }
 
-    public function findByEmail(string $email) {
+    public function getByEmail(string $email): ?array {
       $stmt = $this->pdo->prepare("SELECT id, email, username, password_hash FROM users WHERE email = ?");
       $stmt->execute([$email]);
-      return $stmt->fetch();
+      $user = $stmt->fetch();
+      return $user ?: null;
     }
 
-    public function signUp(string $email, string $username, string $password) {
+    public function getById(int $id): ?array {
+      $stmt = $this->pdo->prepare("SELECT email, username, password_hash FROM users WHERE id = ?");
+      $stmt->execute([$id]);
+      $user = $stmt->fetch();
+      return $user ?: null;
+    }
+
+    public function signUp(string $email, string $username, string $password): int {
       $stmt = $this->pdo->prepare("INSERT INTO users (email, username, password_hash) VALUES (:email, :username, :password_hash)");
       $stmt->execute(["email" => $email, "username" => $username, "password_hash" => $password]);
-      return $this->pdo->lastInsertId();
+      return (int) $this->pdo->lastInsertId();
     }
 
-    public function getUserSettings(string $userId) {
+    public function getUserSettings(int $userId): ?array {
       $stmt = $this->pdo->prepare("SELECT color_theme, font_theme FROM user_settings WHERE user_id = ?");
       $stmt->execute([$userId]);
-      return $stmt->fetch();
+      $userSettings = $stmt->fetch();
+      return $userSettings ?: null;
     }
 
-    public function insertUserSettings(string $userId, string $color, string $font) {
+    public function insertUserSettings(int $userId, string $color, string $font): int {
       $stmt = $this->pdo->prepare("
         INSERT INTO user_settings (user_id, color_theme, font_theme)
         VALUES (:user_id, :color_theme, :font_theme)
       ");
-      return $stmt->execute(["user_id" => $userId, "color_theme" => $color, "font_theme" => $font]);
+      $stmt->execute(["user_id" => $userId, "color_theme" => $color, "font_theme" => $font]);
+      return (int) $this->pdo->lastInsertId();
     }
 
-    public function updateUserSettings(string $userId, string $color, string $font) {
+    public function updateUserSettings(int $userId, string $color, string $font): bool {
       $stmt = $this->pdo->prepare("
         UPDATE user_settings
         SET color_theme=:color_theme, font_theme=:font_theme
         WHERE user_id=:user_id
       ");
-      return $stmt->execute(["color_theme" => $color, "font_theme" => $font, "user_id" => $userId]);
+      $stmt->execute(["color_theme" => $color, "font_theme" => $font, "user_id" => $userId]);
+      return $stmt->rowCount() > 0;
     }
 
-    public function resetPasswordRequest(string $email): bool {
-      $userExists = $this->findByEmail($email);
-
-      if (!$userExists) {
-        return false;
-      }
-
-      $userId = $userExists["id"];
+    public function resetPasswordRequest(int $userId, string $email) {
       $token = bin2hex(random_bytes(32));
 
       $hashedToken = hash('sha256', $token);
@@ -65,13 +69,17 @@
         INSERT INTO password_resets (user_id, token_hash, expires_at, created_at)
         VALUES (:user_id, :token_hash, :expires_at, :created_at)
       ");
-      $stmt->execute([
+      $result = $stmt->execute([
         "user_id" => $userId, 
         "token_hash" => $hashedToken, 
-        "expires_at" => $expires,
+        "expires_at" => $expires, 
         "created_at" => $currentDate
       ]);
 
+      if (!$result) {
+        return false;
+      }
+      
       $mail = new PHPMailer(true);
 
       try {
@@ -87,26 +95,28 @@
         $resetLink = "http://localhost:5173/newPassword?token=" . $token;
 
         $mail->isHTML(true);
-        $mail->Subject  = "Password Reset Request";
-        $mail->Body     = 'To reset your password, click this link (valid for 1 hour): <br/><br/> <a href="' . $resetLink . '">' . $resetLink . '</a>';
-        $mail->AltBody  = "To reset your password, copy and paste this link into your browser: " . $resetLink;
+        $mail->Subject = "Password Reset Request";
+        $mail->Body = 'To reset your password, click this link (valid for 1 hour): <br/><br/> <a href="' . $resetLink . '">' . $resetLink . '</a>';
+        $mail->AltBody = "To reset your password, copy and paste this link into your browser: " . $resetLink;
 
         $mail->send();
         return true;
       }
       catch (Exception $e) {
-        return false;
+        return $e;
       }
     }
 
-    public function getPasswordResetRequest(string $token) {
+    public function getPasswordResetRequest(string $token): ?array {
       $hashedToken = hash('sha256', $token);
       $stmt = $this->pdo->prepare("SELECT user_id, expires_at, created_at FROM password_resets WHERE token_hash = ?");
       $stmt->execute([$hashedToken]);
-      return $stmt->fetch();
+
+      $request = $stmt->fetch();
+      return $request ?: null;
     }
 
-    public function changePassword(string $userId, string $password) {
+    public function changePassword(int $userId, string $password): bool {
       $stmt = $this->pdo->prepare("UPDATE users SET password_hash=:password_hash, updated_at=:updated_at WHERE id=:id");
       $success = $stmt->execute([
         "password_hash" => $password, 
@@ -116,6 +126,7 @@
 
       $stmt = $this->pdo->prepare("DELETE FROM password_resets WHERE user_id = ?");
       $stmt->execute([$userId]);
+      
       return $success;
     }
   }

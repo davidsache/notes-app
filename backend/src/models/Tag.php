@@ -6,60 +6,29 @@
       $this->pdo = $pdo;
     }
 
-    public function addTag(string $userId, string $name) {
-      $stmt = $this->pdo->prepare("INSERT INTO tags (user_id, name) VALUES (?, ?)");
-      return $stmt->execute([$userId, $name]);
-    }
-
-    public function getTag(string $id, string $userId) {
+    public function getTag(int $id, int $userId): ?array {
       $stmt = $this->pdo->prepare("SELECT id, name WHERE id = ? AND user_id = ?");
       $stmt->execute([$id, $userId]);
-      return $stmt->fetch();
+      $tag = $stmt->fetch();
+      return $tag ?: null; 
     }
 
-    public function addTagToNote(string $noteId, string $tagId, string $userId) {
-      $check = $this->pdo->prepare("SELECT id FROM notes WHERE id = ? AND user_id = ?");
-      $check->execute([$noteId, $userId]);
-      if (!$check->fetch()) {
-        return false;
-      }
-
-      $stmt = $this->pdo->prepare("INSERT IGNORE INTO note_tags (note_id, tag_id) VALUES (?, ?)");
-      return $stmt->execute([$noteId, $tagId]);
-    }
-
-    public function deleteTagFromNote(string $noteId, string $tagId, string $userId) {
-      $check = $this->pdo->prepare("SELECT id FROM notes WHERE id = ? AND user_id = ?");
-      $check->execute([$noteId, $userId]);
-      if (!$check->fetch()) {
-        return false;
-      }
-
-      $stmt = $this->pdo->prepare("DELETE FROM note_tags WHERE note_id = ? AND tag_id = ?");
-      return $stmt->execute([$noteId, $tagId]);
-    }
-
-    public function getAllNoteTags(string $noteId, string $userId) {
-      $stmt = $this->pdo->prepare("
-        SELECT t.id, t.name
-        FROM tags t
-        INNER JOIN note_tags nt ON t.id = nt.tag_id
-        INNER JOIN notes n ON nt.note_id = n.id
-        WHERE nt.note_id = ? AND n.user_id = ?
-      ");
-      $stmt->execute([$noteId, $userId]);
-      return $stmt->fetchAll();
-    }
-
-    public function getAllTags(string $userId) {
+    public function getAllTags(int $userId): array {
       $stmt = $this->pdo->prepare("SELECT id, name FROM tags WHERE user_id = ?");
       $stmt->execute([$userId]);
       return $stmt->fetchAll();
     }
 
-    public function deleteTag(string $id, string $userId) {
+    public function addTag(int $userId, string $name): int {
+      $stmt = $this->pdo->prepare("INSERT INTO tags (user_id, name) VALUES (?, ?)");
+      $stmt->execute([$userId, $name]);
+      return (int) $this->pdo->lastInsertId();
+    }
+
+    public function deleteTag(int $id, int $userId): bool {
       $stmt = $this->pdo->prepare("DELETE FROM tags WHERE id = ? AND user_id = ?");
-      return $stmt->execute([$id, $userId]);
+      $stmt->execute([$id, $userId]);
+      return $stmt->rowCount() > 0;
     }
   }
 ?>

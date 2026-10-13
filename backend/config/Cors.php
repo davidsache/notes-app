@@ -5,7 +5,7 @@
   header("Access-Control-Allow-Origin: $allowed_origin");
   header("Access-Control-Allow-Credentials: true");
   header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-  header("Access-Control-Allow-Headers: Content-Type");
+  header("Access-Control-Allow-Headers: Content-Type, Authorization");
   header("Content-Type: application/json");
 
   if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -16,7 +16,7 @@
   session_set_cookie_params([
     "lifetime" => 86400,
     "path" => "/",
-    "domain" => "localhost",  // Set to true in production with HTTPS
+    "domain" => "", // Must be empty string on localhost
     "secure" => false,
     "httponly" => true,
     "samesite" => "Lax"
@@ -27,7 +27,7 @@
   }
 
   spl_autoload_register(function ($class) {
-    $directories = ['Models', 'Services', 'Controllers'];
+    $directories = ['Models', 'Services', 'Controllers', 'Exceptions'];
     
     foreach ($directories as $dir) {
       $file = __DIR__ . '/../src/' . $dir . '/' . $class . '.php';
@@ -35,6 +35,11 @@
         require_once $file;
         return;
       }
+    }
+
+    $appExceptions = __DIR__ . '/../src/Exceptions/AppExceptions.php';
+    if (file_exists($appExceptions)) {
+      require_once $appExceptions;
     }
   });
 ?>

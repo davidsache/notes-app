@@ -1,14 +1,15 @@
 <?php
   require_once __DIR__ . "/../services/NoteService.php";
+  require_once __DIR__ . "/BaseController.php";
 
-  class NoteController {
+  class NoteController extends BaseController {
     private NoteService $noteService;
 
     public function __construct(NoteService $noteService) {
       $this->noteService = $noteService;
     }
 
-    public function handleRequest(string $method, string $userId) {
+    public function handleRequest(string $method, int $userId) {
       switch ($method) {
         case "GET":
           $this->handleGet($userId);
@@ -17,70 +18,89 @@
           $this->handlePost($userId);
           break;
         case "PUT": 
-          $this->handleUpdate($userId);
+          $this->handlePut($userId);
           break;
         case "DELETE": 
           $this->handleDelete($userId);
           break;
         default: 
-          http_response_code(405);
-          echo json_encode(["error" => "Method not allowed"]);
-          break;
+          $this->error('Method not allowed', 405);
       }
     }
 
-    private function handleGet(string $userId) {
-      $notes = $this->noteService->getUserNotes($userId);
+    private function handleGet(int $userId) {
+      try {
+        // Get note
+        if (isset($_GET["id"])) {
+          $note = $this->noteService->getNoteById($_GET["id"], $userId);
+          $this->json(["note" => $note]);
+        }
 
-      if (!$notes) {
-        http_response_code(400);
-        echo json_encode(["error" => "Notes can't be fetched"]);
-        return;
+        // Get all notes
+        $notes = $this->noteService->getUserNotes($userId);
+        $this->json(["notes" => $notes]);
       }
-
-      echo json_encode($notes);
-      return;
+      catch (NotFoundException $e) {
+        $this->error($e->getMessage(), 404);
+      }
+      catch (Exception $e) {
+        $this->error('Failed to retrieve notes', 500);
+      }
     }
 
-    private function handlePost(string $userId) {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $note = $this->noteService->createNote($userId, $input);
+    private function handlePost(int $userId) {
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
 
-      if (!$note) {
-        http_response_code(400);
-        echo json_encode(["error" => "Note could not be added"]);
-        return;
+      try {
+        $noteId = $this->noteService->createNote($userId, $input);
+        $this->json(['success' => $noteId ? true : false], $noteId ? 201 : 500);
       }
-
-      echo json_encode(["success" => true, "note" => $note]);
-      return;
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      }
+      catch (Exception $e) {
+        $this->error('Failed to create note', 500);
+      }
     }
 
-    private function handleUpdate(string $userId) {
-      $id = $_GET['id'] ?? null;
+    private function handlePut(int $userId) {
+      $id = (int) $_GET['id'] ?? null;
 
       if (!$id) {
-        http_response_code(400);
-        echo json_encode(["error" => "Note ID required"]);
-        return;
+        $this->error('Missing required note ID parameter', 400);
       }
 
-      $input = json_decode(file_get_contents("php://input"), true);
-      $this->noteService->updateNote($id, $userId, $input);
-      echo json_encode(["success" => true]);
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+
+      try {
+        $success = $this->noteService->updateNote($id, $userId, $input);
+        $this->json(['success' => $success], $success ? 200 : 500);
+      }
+      catch (NotFoundException $e) {
+        $this->error($e->getMessage(), 404);
+      }
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      }
+      catch (Exception $e) {
+        $this->error('Failed to update note', 500);
+      }
     }
 
-    private function handleDelete(string $userId) {
-      $id = $_GET['id'] ?? null;
+    private function handleDelete(int $userId) {
+      $id = (int) $_GET['id'] ?? null;
       
       if (!$id) {
-        http_response_code(400);
-        echo json_encode(["error" => "Note ID required"]);
-        return;
+        throw new ValidationException("No note ID was provided");
       }
 
-      $this->noteService->deleteNote($id, $userId);
-      echo json_encode(["success" => true]);
+      try {
+        $result = $this->noteService->deleteNote($id, $userId);
+        $this->json(['success' => $result], $result ? 200 : 500);
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
+      }
     }
   }
 ?>

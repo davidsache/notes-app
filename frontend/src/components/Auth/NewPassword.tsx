@@ -28,7 +28,7 @@ export const NewPassword: React.FC = () => {
         navigate('/');
       }
     });
-  }, [token, passwordRequestExists, navigate]);
+  }, [token, navigate]);
 
   useEffect(() => {
     if (passwordRequest?.expires_at) {

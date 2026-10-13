@@ -1,8 +1,8 @@
-import React, { type JSX } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
-export const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+export const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {

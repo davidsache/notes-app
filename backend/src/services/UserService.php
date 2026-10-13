@@ -6,16 +6,34 @@
       $this->userModel = $userModel;
     }
 
-    public function getUserSettings(string $userId) {
-      return $this->userModel->getUserSettings($userId);
+    public function getUserSettings(int $userId) {
+      $userSettings = $this->userModel->getUserSettings($userId);
+
+      if (!$userSettings) {
+        throw new NotFoundException("The user settings does not exist");
+      }
+
+      return $userSettings;
     }
 
-    public function insertUserSettings(string $userId, string $color, string $font) {
-      return $this->userModel->insertUserSettings($userId, $color, $font);
+    public function insertUserSettings(int $userId, string $color, string $font) {
+      $success = $this->userModel->insertUserSettings($userId, $color, $font);
+
+      if (!$success) {
+        throw new Exception("The user settings could not be added to the Database", 500);
+      }
+
+      return $success;
     }
 
-    public function updateUserSettings(string $userId, string $color, string $font) {
-      return $this->userModel->updateUserSettings($userId, $color, $font);
+    public function updateUserSettings(int $userId, string $color, string $font) {
+      $success = $this->userModel->updateUserSettings($userId, $color, $font);
+
+      if (!$success) {
+        throw new Exception("The user settings could not be updated", 500);
+      }
+
+      return true;
     }
   }
 ?>

@@ -1,14 +1,15 @@
 <?php
   require_once __DIR__ . "/../services/TagService.php";
+  require_once __DIR__ . "/BaseController.php";
 
-  class TagController {
+  class TagController extends BaseController {
     private TagService $tagService;
 
     public function __construct(TagService $tagService) {
       $this->tagService = $tagService;
     }
 
-    public function handleRequest(string $method, string $userId) {
+    public function handleRequest(string $method, int $userId) {
       switch ($method) {
         case "GET":
           $this->handleGet($userId);
@@ -16,103 +17,83 @@
         case "POST":
           $this->handlePost($userId);
           break;
-        case "UPDATE":
-          break;
         case "DELETE":
           $this->handleDelete($userId);
           break;
         default:
-          http_response_code(405);
-          echo json_encode(["error" => "Method not allowed"]);
-          break;
+          $this->error('Method not allowed', 405);
       }  
     }
 
-    private function handleGet(string $userId) {
-      // Get tags of note
-      if (isset($_GET["note_id"])) {
-        $tags = $this->tagService->getNoteTags($_GET["note_id"], $userId);
+    private function handleGet(int $userId) {
+      $tagId = $_GET["id"] ?? null;
 
-        if (!$tags) {
-          http_response_code(404);
-          echo json_encode(["error" => "Tags not found"]);
-          return;
-        }
-
-        http_response_code(201);
-        echo json_encode($tags);
-        return;
-      }
       // Get a single tag
-      if (isset($_GET["id"])) {
-        $tag = $this->tagService->getTag($_GET["id"], $userId);
-
-        if (!$tag) {
-          http_response_code(404);
-          echo json_encode(["error" => "Tag not found"]);
-          return;
+      if ($tagId) {
+        try {
+          $tag = $this->tagService->getTag($tagId, $userId);
+          $this->json([$tag]);
         }
-
-        http_response_code(201);
-        echo json_encode($tag);
-        return;
+        catch (ValidationException $e) {
+          $this->error($e->getMessage(), 422, $e->getErrors());
+        }
+        catch (Exception $e) {
+          $this->error($e->getMessage(), $e->getCode());
+        }
       }
       // Get all the tags
       else {
-        $tags = $this->tagService->getAllTags($userId);
-
-        if (!$tags) {
-          http_response_code(404);
-          echo json_encode(["error" => "Tags not found"]);
-          return;
+        try {
+          $tags = $this->tagService->getAllTags($userId);
+          $this->json(["tags" => $tags]);
         }
-
-        http_response_code(201);
-        echo json_encode($tags);
-        return;
+        catch (ValidationException $e) {
+          $this->error($e->getMessage(), 422, $e->getErrors());
+        }
+        catch (Exception $e) {
+          $this->error($e->getMessage(), $e->getCode());
+        }
       }
+
+      $this->error('Invalid operation', 400);
     }
 
-    private function handlePost(string $userId) {
-      $input = json_decode(file_get_contents('php://input'), true);
-      $noteId = $input["note_id"] ?? null;
-      $tagId = $input["tag_id"] ?? null;
-
-      // Add tag to note
-      if ($noteId && $tagId) {
-        $success = $this->tagService->addNoteTag($noteId, $tagId, $userId);
-        echo json_encode(["success" => $success]);
-        return;
-      }
-
+    private function handlePost(int $userId) {
+      $input = json_decode(file_get_contents('php://input'), true) ?? [];
       $name = $input["name"] ?? null;
 
-      // Add tag
-      if ($userId && $name) {
+      if (!$name) {
+        $this->error("Missing tag name parameter");
+      }
+
+      try {
         $success = $this->tagService->addTag($userId, $name);
-        echo json_encode(["success" => $success]);
-        return;
+        $this->json(['success' => $success ? true : false], $success ? 201 : 500);
+      }
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
       }
     }
 
-    private function handleDelete(string $userId) {
-      $noteId = $_GET["note_id"] ?? null;
+    private function handleDelete(int $userId) {
       $tagId = $_GET["tag_id"] ?? null;
 
-      if ($noteId && $tagId) {
-        $success = $this->tagService->deleteNoteTag($noteId, $tagId, $userId);
-        echo json_encode(["success" => $success]);
-        return;
+      if (!$tagId) {
+        $this->error('Missing tag ID parameter');
       }
-      else if ($tagId) {
+
+      try {
         $success = $this->tagService->deleteTag($tagId, $userId);
-        echo json_encode(["success" => $success]);
-        return;
+        $this->json(['success' => $success]);
       }
-      else {
-        http_response_code(400);
-        echo json_encode(["error" => "tag_id is required always"]);
-        return;
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
       }
     }
   }

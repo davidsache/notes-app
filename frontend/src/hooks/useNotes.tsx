@@ -24,7 +24,6 @@ export const useNotes = () => {
         setNotes(data.notes);
       }
       else {
-        setNotes([]);
         throw new Error('Invalid data format received from server');
       }
     }
@@ -62,8 +61,8 @@ export const useNotes = () => {
 
     if (!res.ok) throw new Error('Failed to create note');
 
-    const createdNote = await res.json();
-    return createdNote.note.id;
+    const response = await res.json();
+    return response.success;
   };
 
   const updateNote = async (id: number | string, note: NoteInput) => {

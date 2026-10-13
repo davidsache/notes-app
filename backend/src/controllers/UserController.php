@@ -1,14 +1,15 @@
 <?php
   require_once __DIR__ . "/../services/UserService.php";
+  require_once __DIR__ . "/BaseController.php";
 
-  class UserController {
+  class UserController extends BaseController {
     private UserService $userService;
 
     public function __construct(UserService $userService) {
       $this->userService = $userService;
     }
 
-    public function handleRequest(string $userId, string $method) {
+    public function handleRequest(int $userId, string $method) {
       switch ($method) {
         case 'GET':
           $this->getUserSettings($userId);
@@ -20,56 +21,63 @@
           $this->updateUserSettings($userId);
           break;
         default:
-          http_response_code(405);
-          echo json_encode(["error" => "Method not allowed"]);
-          break;
+          $this->error('Method not allowed', 405);
       }
     }
 
-    public function getUserSettings(string $userId) {
-      $settings = $this->userService->getUserSettings($userId);
-
-      if (!$settings) {
-        http_response_code(404);
-        echo json_encode(["error" => "User settings not found"]);
-        return;
+    public function getUserSettings(int $userId) {
+      try {
+        $settings = $this->userService->getUserSettings($userId);
+        $this->json(['settings' => $settings]);
       }
-
-      http_response_code(201);
-      echo json_encode($settings);
-      return;
+      catch (NotFoundException $e) {
+        $this->error($e->getMessage(), 404);
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
+      }
     }
 
-    public function insertUserSettings(string $userId) {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $color = $input["color_theme"] ?? null;
-      $font = $input["font_theme"] ?? null;
+    public function insertUserSettings(int $userId) {
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+      $color = (string) $input["color_theme"] ?? "";
+      $font = (string) $input["font_theme"] ?? "";
 
-      if (!$color || !$font) {
-        http_response_code(400);
-        echo json_encode(["error" => "Color and font are required"]);
-        return;
+      if (!$color) {
+        $this->error('Color is required', 400);
+      }
+      if (!$font) {
+        $this->error('Font is required', 400);
       }
 
-      $success = $this->userService->insertUserSettings($userId, $color, $font);
-      echo json_encode(["success" => $success]);
-      return;
+      try {
+        $success = $this->userService->insertUserSettings($userId, $color, $font);
+        $this->json(['success' => $success ? true : false], $success ? 201 : 500);
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
+      }
     }
 
-    public function updateUserSettings(string $userId) {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $color = $input["color_theme"] ?? null;
-      $font = $input["font_theme"] ?? null;
+    public function updateUserSettings(int $userId) {
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+      $color = (string) $input["color_theme"] ?? "";
+      $font = (string) $input["font_theme"] ?? "";
 
-      if (!$color || !$font) {
-        http_response_code(400);
-        echo json_encode(["error" => "Color and font are required"]);
-        return;
+      if (!$color) {
+        $this->error('Color is required', 400);
+      }
+      if (!$font) {
+        $this->error('Font is required', 400);
       }
 
-      $success = $this->userService->updateUserSettings($userId, $color, $font);
-      echo json_encode(["success" => $success]);
-      return;
+      try {
+        $success = $this->userService->updateUserSettings($userId, $color, $font);
+        $this->json(['success' => $success]);
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
+      }
     }
   }
 ?>

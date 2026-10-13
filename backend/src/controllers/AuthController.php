@@ -1,7 +1,8 @@
 <?php
   require_once __DIR__ . "/../services/AuthService.php";
+  require_once __DIR__ . "/BaseController.php";
 
-  class AuthController {
+  class AuthController extends BaseController {
     private AuthService $authService;
 
     public function __construct(AuthService $authService) {
@@ -9,111 +10,128 @@
     }
 
     public function login() {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $email = $input["email"] ?? "";
-      $password = $input["password"] ?? "";
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+      $email = (string) $input["email"] ?? "";
+      $password = (string) $input["password"] ?? "";
 
-      if (empty($email) || empty($password)) {
-        http_response_code(400);
-        echo json_encode(["error" => "Email and password are required"]);
-        return;
-      }
-      
-      $user = $this->authService->authenticate($email, $password);
-
-      if ($user) {
-        echo json_encode(["user" => $user]);
-      }
-      else {
-        http_response_code(401);
-        echo json_encode(["error" => "Invalid credentials"]);
+      try {
+        $user = $this->authService->authenticate($email, $password);
+        $_SESSION["user_id"] = $user["id"];
+        $_SESSION["email"] = $user["email"];
+        $_SESSION["username"] = $user["username"];
+        $this->json(['user' => $user]);
+      } 
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      } 
+      catch (UnauthorizedException $e) {
+        $this->error($e->getMessage(), 401);
+      } 
+      catch (Exception $e) {
+        $this->error('An error occurred during authentication.', 500);
       }
     }
 
-    public function check() {
-      $user = $this->authService->getStatus();
+    public function checkAuth() {
+      if (!isset($_SESSION["user_id"])) {
+        $this->error('Not authenticated', 401);
+      }
 
-      if ($user) {
-        echo json_encode(["authenticated" => true, "user" => $user]);
-      }
-      else {
-        http_response_code(401);
-        echo json_encode(["authenticated" => false]);
-      }
+      $user = new stdClass();
+      $user->username = (string) $_SESSION["username"] ?? "";
+      $user->email = (string) $_SESSION["email"] ?? "";
+
+      $this->json(["authenticated" => true, "user" => $user]);
     }
 
     public function signup() {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $email = $input["email"];
-      $username = $input["username"];
-      $password = password_hash($input["password"], PASSWORD_DEFAULT);
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+      $email = (string) $input["email"] ?? "";
+      $username = (string) $input["username"] ?? "";
+      $password = (string) $input["password"] ?? "";
 
-      if (empty($email) || empty($username) || empty($password)) {
-        http_response_code(400);
-        echo json_encode(["error" => "Email, username and password are required"]);
-        return;
-      }
-
-      $success = $this->authService->signUp($email, $username, $password);
-
-      if ($success) {  
-        echo json_encode(["success" => "Sign up was successful"]);
-      }
-      else {
-        http_response_code(400);
-        echo json_encode(["error" => "Sign up wasn't successful"]);
+      try {
+        $userId = $this->authService->signUp($email, $username, $password);
+        $this->json(["success" => $userId ? true : false], $userId ? 201 : 500);
+      } 
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      } 
+      catch (ConflictException $e) {
+        $this->error($e->getMessage(), 409);
+      } 
+      catch (Exception $e) {
+        $this->error('An error occurred during registration.', 500);
       }
     }
 
     public function logout() {
-      $this->authService->terminate();
-      echo json_encode(["success" => true]);
+      $_SESSION = [];
+
+      if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(
+          session_name(),
+          "",
+          time() - 42000,
+          $params["path"],
+          $params["domain"],
+          $params["secure"],
+          $params["httponly"]
+        );
+      }
+
+      session_destroy();
+      $this->json(['success' => true]);
     }
 
     public function handleResetRequest() {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $email = $input["email"] ?? "";
-      $token = $input["token"] ?? "";
+      $input = json_decode(file_get_contents("php://input"), true) ?? [];
+      $email = (string) $input["email"] ?? "";
+      $token = (string) $input["token"] ?? "";
 
-      if ($email) {
-        $success = $this->authService->resetPasswordRequest($email);
-        echo json_encode(["success" => $success]);
-        return;
-      }
-      else if ($token) {
-        $request = $this->authService->getPasswordResetRequest($token);
-
-        if ($request) {
-          echo json_encode(["request" => $request]);
+      try {
+        if ($email) {
+          $result = $this->authService->resetPasswordRequest($email);
+          $this->json(["success" => $result]);
+        }
+        else if ($token) {
+          $request = $this->authService->getPasswordResetRequest($token);
+          $this->json(["request" => $request]);
         }
         else {
-          http_response_code(400);
-          echo json_encode(["error" => "Request could not be fetched."]);
+          $this->error("Invalid operation.", 400, ["Email or token parameter are required."]);
         }
-
-        return;
       }
-      else {
-        http_response_code(400);
-        echo json_encode(["error" => "Email or token is required"]);
-        return;
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      }
+      catch (NotFoundException $e) {
+        $this->error($e->getMessage(), 404);
+      }
+      catch (Exception $e) {
+        $this->error($e->getMessage(), $e->getCode());
       }
     }
 
     public function changePassword() {
-      $input = json_decode(file_get_contents("php://input"), true);
-      $password = $input["password"];
-      $userId = $input["user_id"];
-
-      if (!$password || !$userId) {
-        http_response_code(400);
-        echo json_encode(["error" => "The required data was not provided."]);
-        return;
+      $input = json_decode(file_get_contents('php://input'), true) ?? [];
+      $userId = (int) $input["user_id"] ?? null;
+      $password = (string) $input["password"] ?? "";
+      
+      try {
+        $this->authService->changePassword($userId, $password);
+        $this->json(['success' => true, 'message' => 'Password changed successfully.']);
+      } 
+      catch (ValidationException $e) {
+        $this->error($e->getMessage(), 422, $e->getErrors());
+      } 
+      catch (NotFoundException $e) {
+        $this->error($e->getMessage(), 404);
+      } 
+      catch (Exception $e) {
+        $this->error('An error occurred while changing the password.', 500);
       }
-
-      $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-      $success = $this->authService->changePassword($userId, $passwordHash);
-      echo json_encode(["success" => $success]);
     }
   }
 ?>

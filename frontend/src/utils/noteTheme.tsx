@@ -37,9 +37,9 @@ export const mainStyles = (baseStyles: string, userSettings: UserSettings | unde
         break;
     }
 
-    newStyles += webSafeFonts[webSafeFonts.findIndex(
-      font => font.name === userSettings.font_theme
-    )].tailwindClass;
+    const selectedFont = webSafeFonts.find(font => font.name === userSettings.font_theme);
+    const fontClass = selectedFont ? selectedFont.tailwindClass : webSafeFonts[0].tailwindClass;
+    newStyles += ` ${fontClass}`;
   }
 
   return newStyles;

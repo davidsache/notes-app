@@ -17,7 +17,7 @@ export const useUsers = () => {
     }
 
     const data = await res.json();
-    setUserSettings(data ?? undefined);
+    setUserSettings(data.settings ?? undefined);
     setIsLoading(false);
   }, []);
 

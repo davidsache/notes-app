@@ -22,31 +22,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/CheckAuth.php`, { credentials: 'include' });
 
-  const checkAuthStatus = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/CheckAuth.php`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.authenticated ? { email: data.user.email, username: data.user.username } : null);
+        }
+        else {
+          setUser(null);
+        }
       }
-      else {
+      catch (err) {
         setUser(null);
       }
-    }
-    catch (err) {
-      setUser(null);
-    }
-    finally {
-      setIsLoading(false);
-    }
-  };
+      finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     const res = await fetch(`${API_BASE}/login.php`, {
@@ -56,14 +53,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       body: JSON.stringify({ email, password })
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || 'Login failed');
+      throw new Error(data.error || 'Login failed');
     }
 
-    const data = await res.json();
-    setUser(data.user);
-
+    setUser({ email: data.user.email, username: data.user.username });
     return true;
   };
 
@@ -72,6 +68,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       method: 'POST',
       credentials: 'include'
     });
+
     setUser(null);
   };
 
@@ -97,9 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       credentials: 'include',
       body: JSON.stringify({ email })
     });
-
-    console.log(res)
-
+    
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.error || 'Password reset request failed');

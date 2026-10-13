@@ -8,8 +8,8 @@
     exit();
   }
 
-  $userId = $_SESSION["user_id"];
-  $method = $_SERVER["REQUEST_METHOD"];
+  $userId = (int) $_SESSION["user_id"];
+  $method = (string) $_SERVER["REQUEST_METHOD"];
 
   $noteModel = new Note($pdo);
   $noteService = new NoteService($noteModel);

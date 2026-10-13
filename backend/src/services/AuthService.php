@@ -7,66 +7,96 @@
     }
 
     public function authenticate(string $email, string $password) {
-      $user = $this->userModel->findByEmail($email);
-
-      if ($user && password_verify($password, $user["password_hash"])) {
-        session_regenerate_id(true);
-        $_SESSION["user_id"] = $user["id"];
-        $_SESSION["email"] = $user["email"];
-
-        return [
-          "email" => $user["email"],
-          "username" => $user["username"]
-        ];
+      $email = trim($email);
+      if (empty($email) || empty($password)) {
+        throw new ValidationException('Validation failed', ['credentials' => 'Email and password are required.']);
       }
 
-      return false;
-    }
-
-    public function getStatus() {
-      if (isset($_SESSION["user_id"])) {
-        return [
-          "id" => $_SESSION["user_id"],
-          "email" => $_SESSION["email"]
-        ];
+      $user = $this->userModel->getByEmail($email);
+      if (!$user || !password_verify($password, $user['password_hash'])) {
+        throw new UnauthorizedException('Invalid email or password');
       }
 
-      return false;
+      return $user;
     }
 
     public function signUp(string $email, string $username, string $password) {
-      return $this->userModel->signUp($email, $username, $password);
+      $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+      if (!$email) {
+        throw new ValidationException('Validation failed', ['email' => 'Invalid email address format.']);
+      }
+      if (strlen($password) < 8) {
+        throw new ValidationException('Validation failed', ['password' => 'Password must be at least 8 characters long.']);
+      }
+      if ($this->userModel->getByEmail($email)) {
+        throw new ConflictException('A user with this email address already exists.');
+      }
+
+      $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+      $userId = $this->userModel->signUp($email, $username, $passwordHash);
+      if (!$userId) {
+        throw new Exception("Failed to create user account", 500);
+      }
+
+      return $userId;
     }
 
-    public function resetPasswordRequest(string $email): bool {
-      return $this->userModel->resetPasswordRequest($email);
+    public function resetPasswordRequest(string $email) {
+      $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+      if (!$email) {
+        throw new ValidationException('Validation failed', ['email' => 'Invalid email address format.']);
+      }
+
+      $userExists = $this->userModel->getByEmail($email);
+      if (!$userExists) {
+        throw new NotFoundException("The user does not exist in the Database");
+      }
+
+      $userId = (int) $userExists["id"];
+      $success = $this->userModel->resetPasswordRequest($userId, $email);
+      if (!$success) {
+        throw new Exception("The password request could not be created", 500);
+      }
+
+      return $success;
     }
 
     public function getPasswordResetRequest(string $token) {
-      return $this->userModel->getPasswordResetRequest($token);
-    }
+      $request = $this->userModel->getPasswordResetRequest($token);
 
-    public function changePassword(string $userId, string $password) {
-      return $this->userModel->changePassword($userId, $password);
-    }
-
-    public function terminate() {
-      $_SESSION = array();
-
-      if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(
-          session_name(),
-          "",
-          time() - 42000,
-          $params["path"],
-          $params["domain"],
-          $params["secure"],
-          $params["httponly"]
-        );
+      if (!$request) {
+        throw new NotFoundException("The password change request does not exist");
       }
 
-      session_destroy();
+      return $request;
+    }
+
+    public function changePassword(int $userId, string $password) {
+      if (!$userId) {
+        throw new ValidationException('Validation failed', ['user_id' => 'Invalid or not provided user ID.']);
+      }
+  
+      if (strlen($password) < 8) {
+        throw new ValidationException('Validation failed', ['password' => 'Password must be at least 8 characters long.']);
+      }
+
+      $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+      $success = $this->userModel->changePassword($userId, $passwordHash);
+      if (!$success) {
+        throw new Exception("The password could not be changed", 500);
+      }
+
+      return $success;
+    }
+
+    public function getUserById(int $id) {
+      $user = $this->userModel->getById($id);
+
+      if (!$user) {
+        throw new NotFoundException("Does not exist an user with that ID");
+      }
+
+      return $user;
     }
   }
 ?>
