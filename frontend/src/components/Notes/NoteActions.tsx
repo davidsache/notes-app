@@ -52,37 +52,37 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
   }
 
   return (
-    <div className="flex flex-col flex-wrap">
+    <div className="flex flex-row flex-wrap sm:flex-nowrap lg:flex-col gap-2 w-full">
       <button 
-        className="border-2 rounded border-slate-200 block max-w-lg flex-grow p-2 hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200"
+        className="border-2 rounded border-slate-200 flex items-center justify-center lg:justify-start flex-1 lg:flex-initial w-full lg:max-w-lg p-2 text-xs sm:text-sm md:text-base hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200 transition-colors"
         onClick={handleArchiveNote}
         disabled={actionPending}
       >
         {actionPending 
-          ? <img className="inline w-6 me-1" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
-          : <img className="inline w-6 me-1" src={darkMode ? archiveImgW : archiveImgB} alt="Archive note"/>
+          ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
+          : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? archiveImgW : archiveImgB} alt="Archive note"/>
         }
         {note.is_archived ? 'Unarchive Note' : 'Archive Note'}
       </button>
       <button 
-        className="border-2 rounded border-slate-200 block max-w-lg flex-grow p-2 my-2 hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200"
+        className="border-2 rounded border-slate-200 flex items-center justify-center lg:justify-start flex-1 lg:flex-initial w-full lg:max-w-lg p-2 text-xs sm:text-sm md:text-base hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200 transition-colors"
         onClick={handleDeleteNote}
         disabled={actionPending}
       >
         {actionPending 
-          ? <img className="inline w-6 me-1" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
-          : <img className="inline w-6 me-1" src={darkMode ? deleteImgW : deleteImgB} alt="Delete note"/>
+          ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
+          : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? deleteImgW : deleteImgB} alt="Delete note"/>
         }
         Delete Note
       </button>
       <button
-        className="border-2 rounded border-slate-200 block max-w-lg flex-grow p-2 hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200"
+        className="border-2 rounded border-slate-200 flex items-center justify-center lg:justify-start flex-1 lg:flex-initial w-full lg:max-w-lg p-2 text-xs sm:text-sm md:text-base hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200 transition-colors"
         onClick={handleEditNote}
         disabled={actionPending}
       >
         {actionPending 
-          ? <img className="inline w-6 me-1" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
-          : <img className="inline w-6 me-1" src={darkMode ? editImgW : editImgB} alt="Edit note"/>
+          ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
+          : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? editImgW : editImgB} alt="Edit note"/>
         }
         Edit Note
       </button>

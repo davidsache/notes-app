@@ -144,7 +144,7 @@ export const NoteEditor: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto my-5 p-5 text-center dark:text-white">
+      <div className="max-w-4xl mx-auto my-3 sm:my-5 p-3 sm:p-5 text-center text-sm sm:text-base dark:text-white">
         Loading note...
       </div>
     );
@@ -154,79 +154,85 @@ export const NoteEditor: React.FC = () => {
   const availableTags = tags.filter((tag) => !pendingTagsIds.includes(tag.id));
 
   return (
-    <div className={mainStyles('max-w-4xl mx-auto my-5 p-5 rounded-md border-1 border-slate-200 dark:border-slate-900', userSettings)}>
-      <input
-        type="text"
-        value={title}
-        onChange={handleTitleChange}
-        placeholder="Note Title"
-        className="w-full text-4xl font-bold border-2 border-slate-300 rounded-md outline-none mb-3 p-2"
-        maxLength={255}
-      />
-      {titleError && (
-        <div className="mb-2">
-          <ErrorText error={titleError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
-        </div>
-      )}
-
-      <CreateNote 
-        initialValue={editorValue} 
-        userSettings={userSettings} 
-        onChange={setEditorValue}
-      />
-      {editorError && (
-        <div className="my-2">
-          <ErrorText error={editorError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
-        </div>
-      )}
-
-      {!isEditMode && (
-        <div className="flex mt-2">
-          <div className="basis-1/2">
-            <h4 className="underline">Note Tags</h4>
-            {selectedTags.map((tag) => (
-              <TagBadge 
-                key={tag.id}
-                available={false} 
-                onAddedTag={() => handleTogglePendingTag(tag.id)} 
-                onDeletedTag={() => handleTogglePendingTag(tag.id)}
-                tag={tag}
-              />
-            ))}
+    <div className="px-2 sm:px-4 md:px-6">
+      <div className={mainStyles('max-w-4xl mx-auto my-3 sm:my-5 p-3 sm:p-5 md:p-6 rounded-md border border-slate-200 dark:border-slate-900', userSettings)}>
+        <input
+          type="text"
+          value={title}
+          onChange={handleTitleChange}
+          placeholder="Note Title"
+          className="w-full text-xl sm:text-2xl md:text-4xl font-bold border-2 border-slate-300 rounded-md outline-none mb-3 p-2"
+          maxLength={255}
+        />
+        {titleError && (
+          <div className="mb-2">
+            <ErrorText error={titleError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
           </div>
-          <div className="basis-1/2">
-            <h4 className="underline">Available Tags</h4>
-            {availableTags.map((tag) => (
-              <TagBadge
-                key={tag.id}
-                available={true}
-                onAddedTag={() => handleTogglePendingTag(tag.id)}
-                onDeletedTag={() => handleTogglePendingTag(tag.id)}
-                tag={tag}
-              />
-            ))}
+        )}
+
+        <CreateNote 
+          initialValue={editorValue} 
+          userSettings={userSettings} 
+          onChange={setEditorValue}
+        />
+        {editorError && (
+          <div className="my-2">
+            <ErrorText error={editorError} darkerText={userSettings ? userSettings.color_theme === 'Red' : false}/>
           </div>
+        )}
+
+        {!isEditMode && (
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-3 sm:mt-4 w-full">
+            <div className="w-full sm:basis-1/2 min-w-0">
+              <h4 className="underline text-sm sm:text-base font-semibold mb-2">Note Tags</h4>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {selectedTags.map((tag) => (
+                  <TagBadge 
+                    key={tag.id}
+                    available={false} 
+                    onAddedTag={() => handleTogglePendingTag(tag.id)} 
+                    onDeletedTag={() => handleTogglePendingTag(tag.id)}
+                    tag={tag}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="w-full sm:basis-1/2 min-w-0">
+              <h4 className="underline text-sm sm:text-base font-semibold mb-2">Available Tags</h4>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {availableTags.map((tag) => (
+                  <TagBadge
+                    key={tag.id}
+                    available={true}
+                    onAddedTag={() => handleTogglePendingTag(tag.id)}
+                    onDeletedTag={() => handleTogglePendingTag(tag.id)}
+                    tag={tag}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isEditMode && id && (
+          <NoteTagEditor noteId={id}/>
+        )}
+
+        <div className="mt-4 flex items-center gap-2">
+          <button 
+            className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-3 sm:px-4 rounded inline-flex items-center justify-center shrink-0" 
+            onClick={handleBackButton}
+          >
+            <img className="w-4 h-4 sm:w-5 sm:h-5" src={backW} alt="Back"/>
+          </button>
+          <button 
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded text-sm sm:text-base" 
+            onClick={handleSubmitButton}
+            disabled={isLoading}
+          >
+            {isEditMode ? 'Update note' : 'Save note'}
+          </button>
         </div>
-      )}
-
-      {isEditMode && id && (
-        <NoteTagEditor noteId={id}/>
-      )}
-
-      <div className="mt-3">
-        <button 
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 me-2 rounded align-middle" 
-          onClick={handleBackButton}
-        >
-          <img src={backW} alt="Back"/>
-        </button>
-        <button 
-          className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded align-middle" 
-          onClick={handleSubmitButton}
-          disabled={isLoading}
-        >
-          {isEditMode ? 'Update note' : 'Save note'}
-        </button>
       </div>
     </div>
   );

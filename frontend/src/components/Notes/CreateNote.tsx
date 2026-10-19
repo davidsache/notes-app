@@ -158,7 +158,7 @@ const BlockButton = ({ format, icon }: { format: BlockType | string; icon: strin
   
   return (
     <button
-      className={`my-0 mx-1 ${active ? 'bg-slate-400' : ''}`}
+      className={`p-1 sm:p-1.5 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors ${active ? 'bg-slate-400 dark:bg-slate-500' : ''}`}
       onMouseDown={event => {
         event.preventDefault();
         toggleBlock(editor, format);
@@ -175,7 +175,7 @@ const MarkButton = ({ format, icon }: { format: MarkType; icon: string }) => {
 
   return (
     <button
-      className={`my-0 mx-1 ${active ? 'bg-slate-400' : ''}`}
+      className={`p-1 sm:p-1.5 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors ${active ? 'bg-slate-400 dark:bg-slate-500' : ''}`}
       onMouseDown={event => {
         event.preventDefault();
         toggleMark(editor, format);
@@ -239,7 +239,7 @@ export const CreateNote: React.FC<CreateNoteProps> = ({ initialValue, userSettin
         spellCheck
         autoFocus
         onKeyDown={(e) => onEditableKeyDown(e, editor)}
-        className="border-2 border-slate-300 rounded-md p-2"
+        className="border-2 border-slate-300 rounded-md p-2 sm:p-3 min-h-[180px] sm:min-h-[260px] md:min-h-[320px] text-sm sm:text-base focus:outline-none"
         maxLength={10000}
       />
     </Slate>

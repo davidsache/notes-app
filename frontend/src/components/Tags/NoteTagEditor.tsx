@@ -19,9 +19,9 @@ export const NoteTagEditor: React.FC<NoteTagEditorProps> = ({ noteId }) => {
   );
 
   return (
-    <div className="flex mt-2">
-      <div className="basis-1/2">
-        <h4>Note Tags</h4>
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-3 sm:mt-4 w-full">
+      <div className="w-full sm:basis-1/2 min-w-0">
+        <h4 className="text-sm sm:text-base font-semibold mb-2">Note Tags</h4>
         {noteTags.map((tag) => (
           <TagBadge 
             key={tag.id}
@@ -32,8 +32,8 @@ export const NoteTagEditor: React.FC<NoteTagEditorProps> = ({ noteId }) => {
           />
         ))}
       </div>
-      <div className="basis-1/2">
-        <h4>Available Tags</h4>
+      <div className="w-full sm:basis-1/2 min-w-0">
+        <h4 className="text-sm sm:text-base font-semibold mb-2">Available Tags</h4>
         {availableTags.map((tag) => (
           <TagBadge
             key={tag.id}

@@ -13,9 +13,10 @@ import logoutW from '../assets/logout_w.svg';
 interface HeaderProps {
   windowState: WindowState;
   makeNotesSearch: (searchText: string) => void;
+  onOpenSidebar?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch }) => {
+export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, onOpenSidebar }) => {
   const { logout } = useAuth();
   const { darkMode } = useTheme();
 
@@ -47,36 +48,66 @@ export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch }) 
   }
 
   return (
-    <header className="h-16 border-b-2 border-slate-300 flex items-center px-6 flex-shrink-0 bg-gray-100 dark:bg-gray-900">
-      <h1 className="font-bold text-xl">
-        {headerText()}
-      </h1>
-      <div className="ml-auto">
+    <header className="border-b-2 border-slate-300 bg-gray-100 dark:bg-gray-900 px-3 py-2.5 sm:px-6 md:h-16 md:py-0 flex flex-col md:flex-row md:items-center justify-between gap-2.5 flex-shrink-0">
+      <div className="flex items-center justify-between w-full md:w-auto">
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={onOpenSidebar}
+            className="md:hidden p-1.5 rounded border border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold leading-none"
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
+          <h1 className="font-bold text-lg sm:text-xl truncate">
+            {headerText()}
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-2 md:hidden">
+          <button onClick={changeCurrentWindow} className="p-1">
+            <img 
+              className="w-6 h-6" 
+              src={
+                windowState.currentDashboardWindow === 'allNotes' || windowState.currentDashboardWindow === 'archivedNotes' 
+                ? darkMode ? settingsW : settingsB 
+                : darkMode ? homeW : homeB
+              } 
+              alt="Settings"
+            />
+          </button>
+          <button onClick={handleLogout} className="p-1">
+            <img className="w-6 h-6" src={darkMode ? logoutW : logoutB} alt="Log out"/>
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end gap-2 w-full md:w-auto md:ml-auto">
         {windowState.currentDashboardWindow !== 'settings' && (
           <Search makeSearch={text => makeNotesSearch(text)}/>
         )}
-        <button onClick={changeCurrentWindow}>
-          <img 
-            className="inline-block align-middle" 
-            src={
-              windowState.currentDashboardWindow === 'allNotes' || windowState.currentDashboardWindow === 'archivedNotes' 
-              ? darkMode ? settingsW : settingsB 
-              : darkMode ? homeW : homeB
-            } 
-            alt={
-              windowState.currentDashboardWindow === 'allNotes' || 
-              windowState.currentDashboardWindow === 'archivedNotes' ? 'Notes' : 'Settings'
-            }
-          />
-        </button>
 
-        <button onClick={handleLogout} className='ms-2'>
-          <img 
-            className="inline-block align-middle" 
-            src={darkMode ? logoutW : logoutB} 
-            alt="Log out"
-          />
-        </button>
+        {/* Iconos en escritorio */}
+        <div className="hidden md:flex items-center gap-2">
+          <button onClick={changeCurrentWindow} className="p-1">
+            <img 
+              className="inline-block align-middle w-6 h-6" 
+              src={
+                windowState.currentDashboardWindow === 'allNotes' || windowState.currentDashboardWindow === 'archivedNotes' 
+                ? darkMode ? settingsW : settingsB 
+                : darkMode ? homeW : homeB
+              } 
+              alt="Settings"
+            />
+          </button>
+          <button onClick={handleLogout} className="p-1">
+            <img 
+              className="inline-block align-middle w-6 h-6" 
+              src={darkMode ? logoutW : logoutB} 
+              alt="Log out"
+            />
+          </button>
+        </div>
       </div>
     </header>
   );

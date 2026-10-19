@@ -41,10 +41,10 @@ export const Search: React.FC<SearchProps> = ({ makeSearch }) => {
   }
 
   return (
-    <>
+    <div className="flex items-center w-full md:w-auto gap-1.5">
       <input 
         className={`
-          border-2 w-64 h-8 me-2 rounded-md border-slate-300 bg-white dark:bg-gray-500 
+          border-2 flex-1 md:w-64 h-9 md:h-8 px-2.5 text-sm rounded-md border-slate-300 bg-white dark:bg-gray-500 min-w-0
           ${searchError ? 'placeholder-red-400' : 'placeholder-slate-400'}
         `}
         type="text" 
@@ -55,18 +55,20 @@ export const Search: React.FC<SearchProps> = ({ makeSearch }) => {
       />
       {searchText && (
         <button 
-          className="p-1 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 dark:hover:border-sky-500 dark:hover:bg-sky-700 align-middle me-2"
+          className="h-9 md:h-8 px-2 rounded-md border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 
+          dark:hover:border-sky-500 dark:hover:bg-sky-700 flex items-center justify-center shrink-0"
           onClick={eraseSearch}
         >
-          <img src={darkMode ? closeImgW : closeImgB}/>
+          <img className="w-4 h-4" src={darkMode ? closeImgW : closeImgB}/>        
         </button>
       )}
       <button 
-        className="p-1 rounded-sm border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 dark:hover:border-sky-500 dark:hover:bg-sky-700 align-middle me-4"
+        className="h-9 md:h-8 px-2 rounded-md border border-slate-500 hover:border-indigo-500 hover:bg-indigo-100 
+        dark:hover:border-sky-500 dark:hover:bg-sky-700 flex items-center justify-center shrink-0 md:me-2"
         onClick={handleSearch}
       >
-        <img src={darkMode ? searchImgW : searchImgB}/>
+        <img className="w-4 h-4" src={darkMode ? searchImgW : searchImgB}/>
       </button>
-    </>
+    </div>
   );
 }

@@ -6,7 +6,7 @@ export const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ chi
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div className="flex min-h-screen justify-center items-center">Loading...</div>;
+    return <div className="flex min-h-screen justify-center items-center p-4 text-sm sm:text-base md:text-lg">Loading...</div>;
   }
 
   if (!user) {

@@ -21,10 +21,15 @@ export const TagBadge: React.FC<TagBadgeProps> = ({ tag, available, onAddedTag, 
   }, []);
 
   return (
-    <button onClick={available ? onAddedTag : onDeletedTag} className="me-1">
-      <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colorStyles}`}>
-        <span className="font-bold hover:text-slate-900">{available ? '+' : 'x'}</span>&nbsp;
-        {tag.name}
+    <button onClick={available ? onAddedTag : onDeletedTag} className="max-w-full">
+      <div className={`inline-flex items-center rounded-full px-2.5 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm font-medium max-w-full ${colorStyles}`}>
+        <span className="font-bold hover:text-slate-900 shrink-0">
+          {available ? '+' : 'x'}
+        </span>
+        &nbsp;
+        <span className="truncate max-w-[140px] sm:max-w-[180px] md:max-w-[220px]">
+          {tag.name}
+        </span>
       </div>
     </button> 
   );

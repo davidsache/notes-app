@@ -57,27 +57,41 @@ export const Notes: React.FC<NotesProps> = ({ view, search, tagFilter, clearTagF
   }, [notes, search, view, tagFilter]);
 
   if (isLoading && notes.length === 0) {
-    return <div className="m-2"><Loading/></div>;
+    return <div className="m-4"><Loading/></div>;
   }
 
   return (
-    <div className="flex flex-row h-screen">
-      <NotesSidebar 
-        activeNote={activeNote} 
-        filteredNotes={filteredNotes} 
-        setActiveNote={setActiveNote} 
-        tagFilter={tagFilter}
-        clearTagFilter={clearTagFilter}
-      />
+    <div className="flex flex-col lg:flex-row h-full min-h-0">
+      <div className={`${activeNote ? 'hidden lg:block lg:basis-1/4 lg:border-r-2 lg:border-slate-300' : 'w-full'} h-full overflow-y-auto`}>
+        <NotesSidebar 
+          activeNote={activeNote} 
+          filteredNotes={filteredNotes} 
+          setActiveNote={setActiveNote} 
+          tagFilter={tagFilter}
+          clearTagFilter={clearTagFilter}
+        />
+      </div>
+
       {activeNote && (
-        <>
-          <div className="basis-2/4 border-r-2 border-slate-300">
+        <div className="flex flex-col lg:flex-row flex-1 lg:basis-3/4 h-full overflow-y-auto">
+          <div className="lg:hidden flex items-center justify-between px-3 py-2 border-b border-slate-300 bg-slate-50 dark:bg-gray-800">
+            <button
+              type="button"
+              onClick={() => setActiveNote(null)}
+              className="text-sm font-bold text-blue-600 dark:text-sky-400 flex items-center gap-1 py-1 px-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
+            >
+              ← Back to notes
+            </button>
+          </div>
+
+          <div className="w-full lg:basis-2/3 lg:border-r-2 lg:border-slate-300 lg:overflow-y-auto flex-1">
             <NoteViewer note={activeNote}/>
           </div>
-          <div className="p-2 basis-1/4">
+          
+          <div className="w-full lg:basis-1/3 p-3 border-t lg:border-t-0 border-slate-300 lg:overflow-y-auto">
             <NoteActions note={activeNote} refetch={refetchNotes}/>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

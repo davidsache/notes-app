@@ -41,15 +41,17 @@ export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
         value={currentInput}
         onChange={handleInputChange}
         placeholder="Tag name"
-        className="border-2 border-slate-300 rounded-md outline-none mb-3 p-2"
+        className="w-full border-2 border-slate-300 rounded-md outline-none mb-2 p-2 text-sm bg-white dark:bg-gray-800"
         maxLength={50}
         disabled={submitting}
       />
       {inputError && (
-        <div className="mb-2"><ErrorText error={inputError} darkerText={false}/></div>
+        <div className="mb-2">
+          <ErrorText error={inputError} darkerText={false}/>
+        </div>
       )}
       <button 
-        className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold px-2 py-1 rounded"
+        className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold px-2 py-1.5 text-sm rounded transition-colors"
         onClick={handleCreateTag}
         disabled={submitting}
       >
