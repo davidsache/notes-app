@@ -7,6 +7,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { Element } from '../Slate/Element';
 import { Leaf } from '../Slate/Leaf';
 import type { UserSettings } from '../../interfaces/UserSettings';
+import { useTranslation } from 'react-i18next';
 
 import boldB from '../../assets/slate/bold_b.svg';
 import boldW from '../../assets/slate/bold_w.svg';
@@ -204,6 +205,8 @@ interface CreateNoteProps {
 
 export const CreateNote: React.FC<CreateNoteProps> = ({ initialValue, userSettings, onChange }) => {
   const { darkMode } = useTheme();
+  const { t } = useTranslation();
+
   const renderElement = useCallback((props: any) => <Element {...props} />, []);
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
   const [editor] = useState(() => withHistory(withReact(createEditor())));
@@ -235,7 +238,7 @@ export const CreateNote: React.FC<CreateNoteProps> = ({ initialValue, userSettin
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        placeholder="Note content..."
+        placeholder={t('CreateNote.content')}
         spellCheck
         autoFocus
         onKeyDown={(e) => onEditableKeyDown(e, editor)}

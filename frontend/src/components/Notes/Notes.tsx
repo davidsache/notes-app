@@ -7,6 +7,7 @@ import { Loading } from "../Loading";
 import { extractSlateText } from "../../utils/slateFunctions";
 import type { Tag } from "../../interfaces/TagType";
 import { NotesSidebar } from "./NotesSidebar";
+import { useTranslation } from "react-i18next";
 
 interface NotesProps {
   view: 'allNotes' | 'archivedNotes' | 'settings';
@@ -18,6 +19,7 @@ interface NotesProps {
 export const Notes: React.FC<NotesProps> = ({ view, search, tagFilter, clearTagFilter }) => {
   const { fetchNotes, notes, isLoading } = useNotes();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
+  const { t } = useTranslation();
 
   // When window view changes, hide the active note.
   useEffect(() => {
@@ -80,7 +82,7 @@ export const Notes: React.FC<NotesProps> = ({ view, search, tagFilter, clearTagF
               onClick={() => setActiveNote(null)}
               className="text-sm font-bold text-blue-600 dark:text-sky-400 flex items-center gap-1 py-1 px-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
             >
-              ← Back to notes
+              {t('Notes.goBack')}
             </button>
           </div>
 

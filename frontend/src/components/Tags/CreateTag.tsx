@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTags } from "../../hooks/useTags";
 import { ErrorText } from "../ErrorText";
+import { useTranslation } from "react-i18next";
 
 interface CreateTagProps {
   refetchTags: () => void;
@@ -8,6 +9,8 @@ interface CreateTagProps {
 
 export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
   const { addTag } = useTags();
+  const { t } = useTranslation();
+  
   const [currentInput, setCurrentInput] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [inputError, setInputError] = useState<string>('');
@@ -40,7 +43,7 @@ export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
         type="text"
         value={currentInput}
         onChange={handleInputChange}
-        placeholder="Tag name"
+        placeholder={t('CreateTag.tagName')}
         className="w-full border-2 border-slate-300 rounded-md outline-none mb-2 p-2 text-sm bg-white dark:bg-gray-800"
         maxLength={50}
         disabled={submitting}
@@ -55,7 +58,7 @@ export const CreateTag: React.FC<CreateTagProps> = ({ refetchTags }) => {
         onClick={handleCreateTag}
         disabled={submitting}
       >
-        Add Tag
+        {t('CreateTag.addTag')}
       </button>
     </div>
   );

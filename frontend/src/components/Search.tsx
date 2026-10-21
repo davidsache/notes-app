@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 import searchImgW from '../assets/search_w.svg';
 import searchImgB from '../assets/search_b.svg';
@@ -12,6 +13,7 @@ interface SearchProps {
 
 export const Search: React.FC<SearchProps> = ({ makeSearch }) => {
   const { darkMode } = useTheme();
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [searchError, setSearchError] = useState<string>('');
 
@@ -48,7 +50,7 @@ export const Search: React.FC<SearchProps> = ({ makeSearch }) => {
           ${searchError ? 'placeholder-red-400' : 'placeholder-slate-400'}
         `}
         type="text" 
-        placeholder={searchError ? searchError : "Search by title, content, or tags..."}
+        placeholder={searchError ? searchError : t('Search.searchBy')}
         value={searchText}
         onChange={e => handleOnChange(e.target.value)}
         onKeyDown={e => handleKeyDown(e)}

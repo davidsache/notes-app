@@ -1,0 +1,94 @@
+{
+  "Header": {
+    "allNotes": "All notes",
+    "archivedNotes": "Archived Notes",
+    "settings": "Settings"
+  },
+  "Search": {
+    "searchBy": "Search by title, content, or tags..."
+  },
+  "ProtectedRoute": {
+    "loading": "Loading..."
+  },
+  "Sidebar": {
+    "tags": "Tags"
+  },
+  "CreateTag": {
+    "tagName": "Tag name",
+    "addTag": "Add Tag"
+  },
+  "NoteTagEditor": {
+    "noteTags": "Note Tags",
+    "availableTags": "Available Tags"
+  },
+  "Login": {
+    "login": "Login",
+    "password": "Password",
+    "access": "Log In",
+    "notRegistered": "Not registered?",
+    "signUp": "Sign up",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset your password"
+  },
+  "NewPassword": {
+    "expiredError": "The request has expired, try requesting a new one.",
+    "passwordsError": "The password must be the same in both fields.",
+    "changePassword": "Change your password",
+    "new": "New password",
+    "repeat": "Repeat password",
+    "requestNew": "Request a new",
+    "passwordChange": "password change",
+    "wasChanged": "Your password was changed, now you can",
+    "change": "Change password"
+  },
+  "NewPasswordRequest": {
+    "reset": "Reset password",
+    "instructions": "Introduce your email address, and a password reset link will be sent to it."
+  },
+  "SignUp": {
+    "signUp": "Sign Up",
+    "username": "Username",
+    "alreadyRegistered": "Already registered?"
+  },
+  "CreateNote": {
+    "content": "Note content..."
+  },
+  "NoteActions": {
+    "unarchive": "Unarchive note",
+    "archive": "Archive note",
+    "delete": "Delete note",
+    "edit": "Edit note"
+  },
+  "NoteEditor": {
+    "goBack": "Go back to the dashboard? All changes made will be erased.",
+    "emptyTitle": "The note title is empty",
+    "emptyContent": "The note content is empty",
+    "loading": "Loading note...",
+    "title": "Note Title",
+    "update": "Update note",
+    "save": "Save note"
+  },
+  "Notes": {
+    "goBack": "← Back to notes"
+  },
+  "NotesSidebar": {
+    "deleteText": "Do you wish to delete the tag '{{tagName}}'? It will be removed from all associated notes as well.",
+    "tag": "Tag:",
+    "clearTag": "Clear tag",
+    "deleteTag": "Delete tag",
+    "newNote": "+ Create new note",
+    "noResults": "No results"
+  },
+  "NoteViewer": {
+    "tags": "Tags:",
+    "lastEdited": "Last edited at:"
+  },
+  "Settings": {
+    "darkMode": "Dark Mode",
+    "font": "Theme Font",
+    "color": "Theme Color",
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "Header": {
+    "allNotes": "Todas las notas",
+    "archivedNotes": "Notas archivadas",
+    "settings": "Ajustes"
+  },
+  "Search": {
+    "searchBy": "Buscar por título, contenido o etiquetas..."
+  },
+  "ProtectedRoute": {
+    "loading": "Cargando..."
+  },
+  "Sidebar": {
+    "tags": "Etiquetas"
+  },
+  "CreateTag": {
+    "tagName": "Nombre etiqueta",
+    "addTag": "Añadir etiqueta"
+  },
+  "NoteTagEditor": {
+    "noteTags": "Etiquetas de la nota",
+    "availableTags": "Etiquetas disponibles"
+  },
+  "Login": {
+    "login": "Iniciar sesión",
+    "password": "Contraseña",
+    "access": "Acceder",
+    "notRegistered": "¿No estás registrado?",
+    "signUp": "Regístrate",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Resetar tu contraseña"
+  },
+  "NewPassword": {
+    "expiredError": "La solicitud ha caducado, prueba a solicitar una nueva.",
+    "passwordsError": "Las contraseñas deben ser idénticas en ambos campos.",
+    "changePassword": "Cambia tu contraseña",
+    "new": "Nueva contraseña",
+    "repeat": "Repite la contraseña",
+    "requestNew": "Solicitar un nuevo",
+    "passwordChange": "cambio de contraseña",
+    "wasChanged": "La contraseña ha sido cambiada, ahora puedes",
+    "change": "Cambiar contraseña"
+  },
+  "NewPasswordRequest": {
+    "reset": "Resetear contraseña",
+    "instructions": "Introduce tu dirección de email, y un enlace para resetear la contraseña se enviará al mismo"
+  },
+  "SignUp": {
+    "signUp": "Registro",
+    "username": "Nombre de usuario",
+    "alreadyRegistered": "¿Ya estás registrado?"
+  },
+  "CreateNote": {
+    "content": "Contenido de la nota..."
+  },
+  "NoteActions": {
+    "unarchive": "Desarchivar nota",
+    "archive": "Archivar nota",
+    "delete": "Eliminar nota",
+    "edit": "Editar nota"
+  },
+  "NoteEditor": {
+    "goBack": "Volver al panel principal? Todos los cambios hechos se descartarán.",
+    "emptyTitle": "El título de la nota está vacío",
+    "emptyContent": "El contenido de la nota está vacío",
+    "loading": "Cargando nota...",
+    "title": "Título de la nota",
+    "update": "Actualizar nota",
+    "save": "Guardar nota"
+  },
+  "Notes": {
+    "goBack": "← Volver a las notas"
+  },
+  "NotesSidebar": {
+    "deleteText": "¿Deseas eliminar la etiqueta '{{tagName}}'? También se eliminará de todas las notas en las que esté asociada.",
+    "tag": "Etiqueta:",
+    "clearTag": "Limpiar etiqueta",
+    "deleteTag": "Eliminar etiqueta",
+    "newNote": "+ Crear nueva nota",
+    "noResults": "Sin resultados"
+  },
+  "NoteViewer": {
+    "tags": "Etiquetas:",
+    "lastEdited": "Última edición:"
+  },
+  "Settings": {
+    "darkMode": "Modo oscuro",
+    "font": "Fuente del tema",
+    "color": "Color del tema",
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español"
+  }
+}

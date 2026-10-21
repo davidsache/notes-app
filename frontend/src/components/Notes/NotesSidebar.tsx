@@ -3,6 +3,7 @@ import type { Note } from "../../interfaces/NoteType"
 import type { Tag } from "../../interfaces/TagType";
 import { useTags } from "../../hooks/useTags";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface NotesSidebarProps {
   activeNote: Note | null;
@@ -14,12 +15,14 @@ interface NotesSidebarProps {
 
 export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
   const navigate = useNavigate();
-  const [isDeletingTag, setIsDeletingTag] = useState<boolean>(false);
   const { deleteTag } = useTags();
+  const { t } = useTranslation();
+
+  const [isDeletingTag, setIsDeletingTag] = useState<boolean>(false);
 
   const handleDeleteTag = async () => {
     if (props.tagFilter) {
-      if (confirm(`Do you wish to delete the tag '${props.tagFilter.name}'? It will be removed from all associated notes as well.`)) {
+      if (confirm(t('NotesSidebar.deleteText', { tagName: props.tagFilter.name }))) {
         setIsDeletingTag(true);
         await deleteTag(props.tagFilter.id);
         props.clearTagFilter(true);
@@ -32,7 +35,7 @@ export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
       {props.tagFilter && (
         <div className="mb-3">
           <p className="font-bold mb-2 text-sm sm:text-base text-center sm:text-start">
-            Tag: "{props.tagFilter.name}"
+            {t('NotesSidebar.tag')} "{props.tagFilter.name}"
           </p>
           <div className="flex justify-center items-center sm:justify-normal sm:items-stretch gap-2 mb-3">
             <button 
@@ -40,14 +43,14 @@ export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
               disabled={isDeletingTag}
               className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 text-white font-bold px-3 py-1.5 text-xs sm:text-sm rounded"
             >
-              Clear tag
+              {t('NotesSidebar.clearTag')}
             </button>
             <button 
               onClick={handleDeleteTag} 
               disabled={isDeletingTag}
               className="bg-red-600 hover:bg-red-500 disabled:bg-red-400 text-white font-bold px-3 py-1.5 text-xs sm:text-sm rounded"
             >
-              Delete tag
+              {t('NotesSidebar.deleteTag')}
             </button>
           </div>
           <hr className="border-t-2 border-slate-300"/>
@@ -59,7 +62,7 @@ export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
           onClick={() => navigate('/newNote')} 
           className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded text-sm sm:text-base mb-2"
         >
-          + Create New note
+          {t('NotesSidebar.newNote')}
         </button>
       )}
 
@@ -76,7 +79,7 @@ export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
             <h2 className="font-bold text-sm sm:text-base break-words">{note.title}</h2>
           </div>
         )) : (
-          <p className="text-center text-sm text-gray-500 py-6">No results</p>
+          <p className="text-center text-sm text-gray-500 py-6">{t('NotesSidebar.noResults')}</p>
         )}
       </div>
     </div>

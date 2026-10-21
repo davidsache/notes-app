@@ -3,6 +3,7 @@ import { useNotes } from '../../hooks/useNotes';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Note } from '../../interfaces/NoteType';
+import { useTranslation } from 'react-i18next';
 
 import archiveImgW from '../../assets/archive_w.svg';
 import archiveImgB from '../../assets/archive_b.svg';
@@ -21,8 +22,10 @@ interface NoteActionsProps {
 export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
   const { darkMode } = useTheme();
   const { updateNote, deleteNote } = useNotes();
-  const [actionPending, setActionPending] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const [actionPending, setActionPending] = useState<boolean>(false);
 
   const handleArchiveNote = async () => {
     setActionPending(true);
@@ -62,7 +65,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
           ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
           : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? archiveImgW : archiveImgB} alt="Archive note"/>
         }
-        {note.is_archived ? 'Unarchive Note' : 'Archive Note'}
+        {note.is_archived ? t('NoteActions.unarchive') : t('NoteActions.archive')}
       </button>
       <button 
         className="border-2 rounded border-slate-200 flex items-center justify-center lg:justify-start flex-1 lg:flex-initial w-full lg:max-w-lg p-2 text-xs sm:text-sm md:text-base hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200 transition-colors"
@@ -73,7 +76,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
           ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
           : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? deleteImgW : deleteImgB} alt="Delete note"/>
         }
-        Delete Note
+        {t('NoteActions.delete')}
       </button>
       <button
         className="border-2 rounded border-slate-200 flex items-center justify-center lg:justify-start flex-1 lg:flex-initial w-full lg:max-w-lg p-2 text-xs sm:text-sm md:text-base hover:bg-slate-200 dark:hover:bg-slate-500 disabled:bg-slate-200 transition-colors"
@@ -84,7 +87,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
           ? <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? loadingGifW : loadingGifB} alt="Loading"/>
           : <img className="inline w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 me-1.5 shrink-0" src={darkMode ? editImgW : editImgB} alt="Edit note"/>
         }
-        Edit Note
+        {t('NoteActions.edit')}
       </button>
     </div>
   );

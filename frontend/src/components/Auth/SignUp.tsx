@@ -3,10 +3,12 @@ import { useAuth } from "../../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Loading } from "../Loading";
 import { ErrorText } from "../ErrorText";
+import { useTranslation } from "react-i18next";
 
 export const SignUp: React.FC = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -44,7 +46,9 @@ export const SignUp: React.FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 sm:p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm sm:max-w-md rounded-lg p-5 sm:p-6 md:p-8 shadow-md bg-white dark:bg-slate-800">
-        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">Sign up</h2>
+        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">
+          {t('SignUp.signUp')}
+        </h2>
         
         <div className="mb-2.5 sm:mb-3 mt-1">
           <input
@@ -63,7 +67,7 @@ export const SignUp: React.FC = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
+            placeholder={t('SignUp.username')}
             maxLength={50}
             required
             className="w-full rounded-md border border-slate-600 p-2 sm:p-2.5 text-xs sm:text-sm md:text-base"
@@ -75,7 +79,7 @@ export const SignUp: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder={t('Login.password')}
             minLength={8}
             required
             className="w-full rounded-md border border-slate-600 p-2 sm:p-2.5 text-xs sm:text-sm md:text-base"
@@ -93,12 +97,12 @@ export const SignUp: React.FC = () => {
             disabled:border-slate-500 dark:hover:border-sky-500 dark:hover:bg-sky-700 transition-colors shrink-0"
             disabled={submitted}
           >
-            Sign Up
+            {t('Login.signUp')}
           </button>
           <p className="text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Already registered?&nbsp;
+            {t('SignUp.alreadyRegistered')}&nbsp;
             <NavLink onClick={(e) => handleLoginLink(e)} to="/login" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              Log in
+              {t('Login.access')}
             </NavLink>
           </p>
         </div>

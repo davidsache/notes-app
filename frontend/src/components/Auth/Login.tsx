@@ -3,9 +3,11 @@ import { useAuth } from '../../context/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Loading } from '../Loading';
 import { ErrorText } from '../ErrorText';
+import { useTranslation } from 'react-i18next';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -43,7 +45,9 @@ export const Login: React.FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 sm:p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm sm:max-w-md rounded-lg p-5 sm:p-6 md:p-8 shadow-md bg-white dark:bg-slate-800">
-        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">Login</h2>
+        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">
+          {t('Login.login')}
+        </h2>
         
         <div className="mb-2.5 sm:mb-3 mt-1">
           <input
@@ -62,7 +66,7 @@ export const Login: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder={t('Login.password')}
             minLength={8}
             required
             className="w-full rounded-md border border-slate-600 p-2 sm:p-2.5 text-xs sm:text-sm md:text-base"
@@ -82,19 +86,19 @@ export const Login: React.FC = () => {
               dark:hover:bg-sky-700 transition-colors" 
               disabled={submitted}
             >
-              Log In
+              {t('Login.access')}
             </button>
           </p>
           <p className="mt-3 text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Not registered?&nbsp;
+            {t('Login.notRegistered')}&nbsp;
             <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              Sign up
+              {t('Login.signUp')}
             </NavLink>
           </p>
           <p className="mt-2 text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Forgot your password?&nbsp;
+            {t('Login.forgotPassword')}&nbsp;
             <NavLink to="/reset" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              Reset password
+              {t('Login.resetPassword')}
             </NavLink>
           </p>
         </div>

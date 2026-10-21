@@ -3,9 +3,11 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Loading } from "../Loading";
 import { ErrorText } from "../ErrorText";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const NewPassword: React.FC = () => {
   const { changePassword, passwordRequestExists, passwordRequest } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -37,7 +39,7 @@ export const NewPassword: React.FC = () => {
       setExpired(hasExpired);
 
       if (hasExpired) {
-        setError("The request has expired, try requesting a new one.");
+        setError(t('NewPassword.expiredError'));
       }
     }
   }, [passwordRequest]);
@@ -50,7 +52,7 @@ export const NewPassword: React.FC = () => {
     }
 
     if (password !== passwordConfirm) {
-      setError("The password must be the same in both fields.");
+      setError(t('NewPassword.passwordsError'));
       return;
     }
 
@@ -75,14 +77,16 @@ export const NewPassword: React.FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 sm:p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm sm:max-w-md rounded-lg p-5 sm:p-6 md:p-8 shadow-md bg-white dark:bg-slate-800">
-        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">Change your password</h2>
+        <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4">
+          {t('NewPassword.changePassword')}
+        </h2>
         
         <div className="mb-2.5 sm:mb-3 mt-1">
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="New password"
+            placeholder={t('NewPassword.new')}
             maxLength={255}
             required
             className="w-full rounded-md border border-slate-600 p-2 sm:p-2.5 text-xs sm:text-sm md:text-base"
@@ -95,7 +99,7 @@ export const NewPassword: React.FC = () => {
             type="password"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
-            placeholder="Repeat password"
+            placeholder={t('NewPassword.repeat')}
             minLength={8}
             required
             className="w-full rounded-md border border-slate-600 p-2 sm:p-2.5 text-xs sm:text-sm md:text-base"
@@ -115,17 +119,17 @@ export const NewPassword: React.FC = () => {
         )}
         {expired && (
           <p className="my-2 text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Request a new&nbsp;
+            {t('NewPassword.requestNew')}&nbsp;
             <NavLink to="/reset" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              password change
+              {t('NewPassword.passwordChange')}
             </NavLink>
           </p>
         )}
         {success && (
           <p className="my-2 text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Your password was changed, now you can&nbsp;
+            {t('NewPassword.wasChanged')}&nbsp;
             <NavLink to="/login" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              log in
+              {t('Login.login').toLowerCase()}
             </NavLink>
           </p>
         )}
@@ -140,7 +144,7 @@ export const NewPassword: React.FC = () => {
               dark:hover:bg-sky-700 transition-colors" 
               disabled={submitted || expired || success}
             >
-              Change password
+              {t('NewPassword.change')}
             </button>
           </p>
         </div>

@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",
+    "i18next": "^26.5.2",
+    "i18next-browser-languagedetector": "^8.2.1",
     "is-hotkey": "^0.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-i18next": "^17.1.0",
     "react-router-dom": "^7.18.2",
     "slate-history": "^0.113.1",
     "slate-react": "^0.126.0",

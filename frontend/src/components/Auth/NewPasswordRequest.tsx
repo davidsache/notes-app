@@ -3,9 +3,11 @@ import { Loading } from "../Loading";
 import { ErrorText } from "../ErrorText";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const NewPasswordRequest: React.FC = () => {
   const { newPasswordRequest } = useAuth();
+  const { t } = useTranslation();
   
   const [email, setEmail] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -39,10 +41,10 @@ export const NewPasswordRequest: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 sm:p-6">
       <form onSubmit={handleSubmitRequest} className="w-full max-w-sm sm:max-w-md rounded-lg p-5 sm:p-6 md:p-8 shadow-md bg-white dark:bg-slate-800">
         <h2 className="text-center font-bold text-lg sm:text-xl md:text-2xl mb-2">
-          Reset password
+          {t('NewPasswordRequest.reset')}
         </h2>
         <p className="my-2 text-xs sm:text-sm md:text-base text-center sm:text-left">
-          Introduce your email address, and a password reset link will be sent to it.
+          {t('NewPasswordRequest.instructions')}
         </p>
         <div className="mb-2.5 sm:mb-3 mt-1">
           <input
@@ -67,12 +69,12 @@ export const NewPasswordRequest: React.FC = () => {
             disabled:border-slate-500 dark:hover:border-sky-500 dark:hover:bg-sky-700 transition-colors shrink-0" 
             disabled={submitted}
           >
-            Reset password
+            {t('NewPasswordRequest.reset')}
           </button>
           <p className="text-xs sm:text-sm md:text-base text-center sm:text-left">
-            Not registered?&nbsp;
+            {t('Login.notRegistered')}&nbsp;
             <NavLink onClick={(e) => handleSignupLink(e)} to="/signup" className="text-indigo-600 hover:text-indigo-400 dark:text-sky-400">
-              Sign up
+              {t('Login.signUp')}
             </NavLink>
           </p>
         </div>

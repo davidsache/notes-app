@@ -2,6 +2,7 @@ import { type WindowState } from '../interfaces/WindowState';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { Search } from './Search';
+import { useTranslation } from 'react-i18next';
 
 import settingsB from '../assets/settings_b.svg';
 import settingsW from '../assets/settings_w.svg';
@@ -18,6 +19,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, onOpenSidebar }) => {
   const { logout } = useAuth();
+  const { t } = useTranslation();
   const { darkMode } = useTheme();
 
   const handleLogout = async () => {
@@ -31,10 +33,10 @@ export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, on
 
   const headerText = (): string => {
     switch (windowState.currentDashboardWindow) {
-      case 'allNotes': return 'All notes';
-      case 'archivedNotes': return 'Archived Notes';
-      case 'settings': return 'Settings';
-      default: return 'All notes';
+      case 'allNotes': return t('Header.allNotes');
+      case 'archivedNotes': return t('Header.archivedNotes');
+      case 'settings': return t('Header.settings');
+      default: return t('Header.allNotes');
     }
   }
 
@@ -87,7 +89,6 @@ export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, on
           <Search makeSearch={text => makeNotesSearch(text)}/>
         )}
 
-        {/* Iconos en escritorio */}
         <div className="hidden md:flex items-center gap-2">
           <button onClick={changeCurrentWindow} className="p-1">
             <img 

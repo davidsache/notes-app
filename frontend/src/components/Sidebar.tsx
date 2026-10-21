@@ -5,6 +5,7 @@ import { Loading } from './Loading';
 import { CreateTag } from './Tags/CreateTag';
 import { SidebarTag } from './Tags/SidebarTag';
 import type { SidebarProps } from '../interfaces/Sidebar';
+import { useTranslation } from 'react-i18next';
 
 import logoHeader from '../assets/logo_header.png';
 import allNotesB from '../assets/home_b.svg';
@@ -24,6 +25,7 @@ type ResponsiveSidebarProps = SidebarProps & {
 const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) => {
   const { darkMode } = useTheme();
   const { isLoading, tags, fetchAllTags } = useTags();
+  const { t } = useTranslation();
 
   useImperativeHandle(ref, () => ({
     refetchTags() {
@@ -69,21 +71,23 @@ const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) =
             onClick={() => props.changeNotesView('allNotes')}
           >
             <img src={darkMode ? allNotesW : allNotesB} alt="All Notes" className="inline me-2 w-5 h-5"/>
-            All Notes
+            {t('Header.allNotes')}
           </button>
           <button 
             className="w-full text-left hover:bg-slate-200 dark:hover:bg-slate-500 rounded p-2 flex items-center text-sm md:text-base"
             onClick={() => props.changeNotesView('archivedNotes')}
           >
             <img src={darkMode ? archivedNotesW : archivedNotesB} alt="Archived Notes" className="inline me-2 w-5 h-5"/>
-            Archived Notes
+            {t('Header.archivedNotes')}
           </button>
         </div>
 
         <hr className="my-3 mx-2 border-t-2 border-slate-300"/>
 
         <div className="px-4 pb-4 flex-1">
-          <h3 className="text-gray-500 font-bold text-sm md:text-base">Tags</h3>
+          <h3 className="text-gray-500 font-bold text-sm md:text-base">
+            {t('Sidebar.tags')}
+          </h3>
           <CreateTag refetchTags={fetchAllTags}/>
           <div className="mt-2 space-y-1">
             {isLoading ? <Loading/> : 

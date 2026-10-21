@@ -11,16 +11,20 @@ import { TagBadge } from "../Tags/TagBadge";
 import { useUsers } from "../../hooks/useUsers";
 import { mainStyles } from "../../utils/noteTheme";
 import { deserializeFromJson } from "../../utils/slateFunctions";
+import { ErrorText } from "../ErrorText";
+import { useTranslation } from "react-i18next";
 
 import backW from '../../assets/back_w.svg';
-import { ErrorText } from "../ErrorText";
 
 export const NoteEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();  
   const { fetchNote, updateNote, createNote } = useNotes();
   const { tags, fetchAllTags } = useTags();
   const navigate = useNavigate();
+  const { t } = useTranslation();  
+  const { userSettings, fetchUserSettings } = useUsers();
   const location = useLocation();
+
   const routerState = location.state as Note | undefined;
 
   const isEditMode = Boolean(id);
@@ -35,7 +39,6 @@ export const NoteEditor: React.FC = () => {
   const [titleError, setTitleError] = useState<string>();
   const [editorError, setEditorError] = useState<string>('');
 
-  const { userSettings, fetchUserSettings } = useUsers();
   
   useEffect(() => {
     if (!isEditMode || !id) {
@@ -93,7 +96,7 @@ export const NoteEditor: React.FC = () => {
   };
 
   const handleBackButton = () => {
-    if (confirm('Go back to the dashboard? All changes made will be erased.')) {
+    if (confirm(t('NoteEditor.goBack'))) {
       navigate('/');
     }
   };
@@ -110,10 +113,10 @@ export const NoteEditor: React.FC = () => {
     const titleEmpty = title.trim() === '';
     const editorEmpty = editorValue.map(n => Node.string(n)).join('').trim() === '';
 
-    if (titleEmpty) setTitleError('The note title is empty.');
+    if (titleEmpty) setTitleError(t('NoteEditor.emptyTitle'));
     else setTitleError('');
 
-    if (editorEmpty) setEditorError('The note content is empty.');
+    if (editorEmpty) setEditorError(t('NoteEditor.emptyContent'));
     else setEditorError('');
 
     if (titleEmpty || editorEmpty) {
@@ -145,7 +148,7 @@ export const NoteEditor: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto my-3 sm:my-5 p-3 sm:p-5 text-center text-sm sm:text-base dark:text-white">
-        Loading note...
+        {t('NoteEditor.loading')}
       </div>
     );
   }
@@ -160,7 +163,7 @@ export const NoteEditor: React.FC = () => {
           type="text"
           value={title}
           onChange={handleTitleChange}
-          placeholder="Note Title"
+          placeholder={t('NoteEditor.title')}
           className="w-full text-xl sm:text-2xl md:text-4xl font-bold border-2 border-slate-300 rounded-md outline-none mb-3 p-2"
           maxLength={255}
         />
@@ -184,7 +187,9 @@ export const NoteEditor: React.FC = () => {
         {!isEditMode && (
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-3 sm:mt-4 w-full">
             <div className="w-full sm:basis-1/2 min-w-0">
-              <h4 className="underline text-sm sm:text-base font-semibold mb-2">Note Tags</h4>
+              <h4 className="underline text-sm sm:text-base font-semibold mb-2">
+                {t('NoteTagEditor.noteTags')}
+              </h4>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {selectedTags.map((tag) => (
                   <TagBadge 
@@ -198,7 +203,9 @@ export const NoteEditor: React.FC = () => {
               </div>
             </div>
             <div className="w-full sm:basis-1/2 min-w-0">
-              <h4 className="underline text-sm sm:text-base font-semibold mb-2">Available Tags</h4>
+              <h4 className="underline text-sm sm:text-base font-semibold mb-2">
+                {t('NoteTagEditor.availableTags')}
+              </h4>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {availableTags.map((tag) => (
                   <TagBadge
@@ -230,7 +237,7 @@ export const NoteEditor: React.FC = () => {
             onClick={handleSubmitButton}
             disabled={isLoading}
           >
-            {isEditMode ? 'Update note' : 'Save note'}
+            {isEditMode ? t('NoteEditor.update') : t('NoteEditor.save')}
           </button>
         </div>
       </div>
