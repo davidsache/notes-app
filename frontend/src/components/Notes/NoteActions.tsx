@@ -13,6 +13,7 @@ import editImgW from '../../assets/edit_w.svg';
 import editImgB from '../../assets/edit_b.svg';
 import loadingGifW from '../../assets/loading-w.gif';
 import loadingGifB from '../../assets/loading-b.gif';
+import { useModal } from '../../context/ModalContext';
 
 interface NoteActionsProps {
   note: Note;
@@ -24,6 +25,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
   const { updateNote, deleteNote } = useNotes();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { openModal } = useModal();
 
   const [actionPending, setActionPending] = useState<boolean>(false);
 
@@ -40,14 +42,19 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ note, refetch }) => {
     refetch();
   }
 
-  const handleDeleteNote = async () => {
-    if (confirm("Do you wish to delete the note?")) {
-      setActionPending(true);
-      await deleteNote(note.id);
+  const handleDeleteNote = () => {
+    openModal({ 
+      message: t('NoteActions.deleteNote', { noteName: note.title }), 
+      onConfirm: confirmDeleteNode 
+    });
+  }
 
-      setActionPending(false);
-      refetch();
-    }
+  const confirmDeleteNode = async () => {
+    setActionPending(true);
+    await deleteNote(note.id);
+
+    setActionPending(false);
+    refetch();
   }
 
   const handleEditNote = () => {

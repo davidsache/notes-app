@@ -57,6 +57,7 @@
     "unarchive": "Unarchive note",
     "archive": "Archive note",
     "delete": "Delete note",
+    "deleteNote": "Do you wish to delete the note '{{noteName}}'?",
     "edit": "Edit note"
   },
   "NoteEditor": {
@@ -90,5 +91,9 @@
     "language": "Language",
     "english": "English",
     "spanish": "Spanish"
+  },
+  "Modal": {
+    "confirmText": "Confirm Action",
+    "yes": "Yes"
   }
 }

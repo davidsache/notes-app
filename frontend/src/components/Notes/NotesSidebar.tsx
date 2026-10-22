@@ -4,6 +4,7 @@ import type { Tag } from "../../interfaces/TagType";
 import { useTags } from "../../hooks/useTags";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useModal } from "../../context/ModalContext";
 
 interface NotesSidebarProps {
   activeNote: Note | null;
@@ -17,17 +18,23 @@ export const NotesSidebar: React.FC<NotesSidebarProps> = (props) => {
   const navigate = useNavigate();
   const { deleteTag } = useTags();
   const { t } = useTranslation();
+  const { openModal } = useModal();
 
   const [isDeletingTag, setIsDeletingTag] = useState<boolean>(false);
 
-  const handleDeleteTag = async () => {
+  const handleDeleteTag = () => {
     if (props.tagFilter) {
-      if (confirm(t('NotesSidebar.deleteText', { tagName: props.tagFilter.name }))) {
-        setIsDeletingTag(true);
-        await deleteTag(props.tagFilter.id);
-        props.clearTagFilter(true);
-      }
+      openModal({
+        message: t('NotesSidebar.deleteText', { tagName: props.tagFilter.name }),
+        onConfirm: () => confirmDeleteTag(props.tagFilter!.id)
+      });
     }
+  }
+
+  const confirmDeleteTag = async (tagId: string) => {
+    setIsDeletingTag(true);
+    await deleteTag(tagId);
+    props.clearTagFilter(true);
   }
 
   return (

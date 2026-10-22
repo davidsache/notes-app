@@ -57,10 +57,11 @@
     "unarchive": "Desarchivar nota",
     "archive": "Archivar nota",
     "delete": "Eliminar nota",
+    "deleteNote": "¿Deseas eliminar la nota '{{noteName}}'?",
     "edit": "Editar nota"
   },
   "NoteEditor": {
-    "goBack": "Volver al panel principal? Todos los cambios hechos se descartarán.",
+    "goBack": "¿Volver al panel principal? Todos los cambios hechos se descartarán.",
     "emptyTitle": "El título de la nota está vacío",
     "emptyContent": "El contenido de la nota está vacío",
     "loading": "Cargando nota...",
@@ -90,5 +91,9 @@
     "language": "Idioma",
     "english": "Inglés",
     "spanish": "Español"
+  },
+  "Modal": {
+    "confirmText": "Confirmar acción",
+    "yes": "Si"
   }
 }

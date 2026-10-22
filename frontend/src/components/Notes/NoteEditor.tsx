@@ -15,6 +15,7 @@ import { ErrorText } from "../ErrorText";
 import { useTranslation } from "react-i18next";
 
 import backW from '../../assets/back_w.svg';
+import { useModal } from "../../context/ModalContext";
 
 export const NoteEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();  
@@ -23,6 +24,7 @@ export const NoteEditor: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();  
   const { userSettings, fetchUserSettings } = useUsers();
+  const { openModal } = useModal();
   const location = useLocation();
 
   const routerState = location.state as Note | undefined;
@@ -38,7 +40,6 @@ export const NoteEditor: React.FC = () => {
 
   const [titleError, setTitleError] = useState<string>();
   const [editorError, setEditorError] = useState<string>('');
-
   
   useEffect(() => {
     if (!isEditMode || !id) {
@@ -96,9 +97,10 @@ export const NoteEditor: React.FC = () => {
   };
 
   const handleBackButton = () => {
-    if (confirm(t('NoteEditor.goBack'))) {
-      navigate('/');
-    }
+    openModal({
+      message: t('NoteEditor.goBack'),
+      onConfirm: () => navigate('/')
+    });
   };
 
   const handleTogglePendingTag = (tagId: string) => {

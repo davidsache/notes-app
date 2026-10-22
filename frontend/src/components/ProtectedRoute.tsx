@@ -10,7 +10,7 @@ export const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ chi
   if (isLoading) {
     return (
       <div className="flex min-h-screen justify-center items-center p-4 text-sm sm:text-base md:text-lg">
-        {t('ProtectedRoute.loading')};
+        {t('ProtectedRoute.loading')}
       </div>
     );
   }

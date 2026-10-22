@@ -9,6 +9,7 @@ import { ThemeContext } from './context/ThemeContext';
 import { NoteEditor } from './components/Notes/NoteEditor';
 import { NewPasswordRequest } from './components/Auth/NewPasswordRequest';
 import { NewPassword } from './components/Auth/NewPassword';
+import { ModalProvider } from './context/ModalContext';
 
 export const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -48,39 +49,39 @@ export const App: React.FC = () => {
     <ThemeContext.Provider value={themeContextValue}>
       <AuthProvider>
         <Router>
-          <Routes>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/signup" element={<SignUp/>}/>
-            <Route path="/reset" element={<NewPasswordRequest/>}/>
-            <Route path="/newPassword" element={<NewPassword/>}/>
-
-            <Route 
-              path="/newNote" 
-              element={
-                <ProtectedRoute>
-                  <NoteEditor/>
-                </ProtectedRoute>
-              }
-            />
-            <Route 
-              path="/edit/:id" 
-              element={
-                <ProtectedRoute>
-                  <NoteEditor/>
-                </ProtectedRoute>
-              }
-            />
-            <Route 
-              path="/" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard/>
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route path="*" element={<Navigate to="/" replace/>}/>
-          </Routes>
+          <ModalProvider>
+            <Routes>
+              <Route path="/login" element={<Login/>}/>
+              <Route path="/signup" element={<SignUp/>}/>
+              <Route path="/reset" element={<NewPasswordRequest/>}/>
+              <Route path="/newPassword" element={<NewPassword/>}/>
+              <Route 
+                path="/newNote" 
+                element={
+                  <ProtectedRoute>
+                    <NoteEditor/>
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="/edit/:id" 
+                element={
+                  <ProtectedRoute>
+                    <NoteEditor/>
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="/" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard/>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="*" element={<Navigate to="/" replace/>}/>
+            </Routes>
+          </ModalProvider>
         </Router>
       </AuthProvider>
     </ThemeContext.Provider>
