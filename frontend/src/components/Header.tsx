@@ -18,7 +18,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, onOpenSidebar }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { t } = useTranslation();
   const { darkMode } = useTheme();
 
@@ -33,10 +33,14 @@ export const Header: React.FC<HeaderProps> = ({ windowState, makeNotesSearch, on
 
   const headerText = (): string => {
     switch (windowState.currentDashboardWindow) {
-      case 'allNotes': return t('Header.allNotes');
-      case 'archivedNotes': return t('Header.archivedNotes');
-      case 'settings': return t('Header.settings');
-      default: return t('Header.allNotes');
+      case 'allNotes': 
+        return user ? t('Header.allNotes', { username: user.username }) : t('Sidebar.allNotes');
+      case 'archivedNotes': 
+        return user ? t('Header.archivedNotes', { username: user.username }) : t('Sidebar.archivedNotes');
+      case 'settings': 
+        return t('Header.settings');
+      default: 
+        return user ? t('Header.allNotes', { username: user.username }) : t('Sidebar.allNotes');
     }
   }
 

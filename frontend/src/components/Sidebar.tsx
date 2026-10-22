@@ -7,7 +7,8 @@ import { SidebarTag } from './Tags/SidebarTag';
 import type { SidebarProps } from '../interfaces/Sidebar';
 import { useTranslation } from 'react-i18next';
 
-import logoHeader from '../assets/logo_header.png';
+import logoHeaderES from '../assets/logo_header_es.png';
+import logoHeaderEN from '../assets/logo_header_en.png';
 import allNotesB from '../assets/home_b.svg';
 import allNotesW from '../assets/home_w.svg';
 import archivedNotesB from '../assets/archive_b.svg';
@@ -25,7 +26,7 @@ type ResponsiveSidebarProps = SidebarProps & {
 const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) => {
   const { darkMode } = useTheme();
   const { isLoading, tags, fetchAllTags } = useTags();
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   useImperativeHandle(ref, () => ({
     refetchTags() {
@@ -36,6 +37,14 @@ const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) =
   useEffect(() => {
     fetchAllTags();
   }, [fetchAllTags]);
+
+  const logoByLanguage = (): string => {
+    switch (i18n.resolvedLanguage) {
+      case 'es': return logoHeaderES;
+      case 'en': return logoHeaderEN;
+      default: return logoHeaderEN;
+    }
+  }
 
   return (
     <>
@@ -55,7 +64,7 @@ const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) =
         `}
       >
         <div className="flex items-center justify-between px-4 mt-4">
-          <img src={logoHeader} className="w-28 md:w-32 mx-auto md:mx-0" alt="Notely"/>
+          <img src={logoByLanguage()} className="w-15 ms-3 md:w-12" alt="Notes"/>
           <button
             type="button"
             onClick={props.onClose}
@@ -65,20 +74,20 @@ const Sidebar = forwardRef<SidebarHandle, ResponsiveSidebarProps>((props, ref) =
           </button>
         </div>
 
-        <div className="mt-4 mx-4 space-y-1">
+        <div className="mt-2 mx-4 space-y-1">
           <button 
             className="w-full text-left hover:bg-slate-200 dark:hover:bg-slate-500 rounded p-2 flex items-center text-sm md:text-base"
             onClick={() => props.changeNotesView('allNotes')}
           >
             <img src={darkMode ? allNotesW : allNotesB} alt="All Notes" className="inline me-2 w-5 h-5"/>
-            {t('Header.allNotes')}
+            {t('Sidebar.allNotes')}
           </button>
           <button 
             className="w-full text-left hover:bg-slate-200 dark:hover:bg-slate-500 rounded p-2 flex items-center text-sm md:text-base"
             onClick={() => props.changeNotesView('archivedNotes')}
           >
             <img src={darkMode ? archivedNotesW : archivedNotesB} alt="Archived Notes" className="inline me-2 w-5 h-5"/>
-            {t('Header.archivedNotes')}
+            {t('Sidebar.archivedNotes')}
           </button>
         </div>
 

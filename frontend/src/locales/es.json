@@ -1,7 +1,7 @@
 {
   "Header": {
-    "allNotes": "Todas las notas",
-    "archivedNotes": "Notas archivadas",
+    "allNotes": "Notas de {{username}}",
+    "archivedNotes": "Notas archivadas de {{username}}",
     "settings": "Ajustes"
   },
   "Search": {
@@ -11,6 +11,8 @@
     "loading": "Cargando..."
   },
   "Sidebar": {
+    "allNotes": "Todas las notas",
+    "archivedNotes": "Notas archivadas",
     "tags": "Etiquetas"
   },
   "CreateTag": {
